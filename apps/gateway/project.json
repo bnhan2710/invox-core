@@ -1,7 +1,7 @@
 {
-  "name": "einvoice",
+  "name": "gateway",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/einvoice/src",
+  "sourceRoot": "apps/gateway/src",
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -10,7 +10,7 @@
       "options": {
         "command": "webpack-cli build",
         "args": ["--node-env=production"],
-        "cwd": "apps/einvoice"
+        "cwd": "apps/gateway"
       },
       "configurations": {
         "development": {
@@ -23,8 +23,8 @@
       "cache": true,
       "executor": "@nx/js:prune-lockfile",
       "outputs": [
-        "{workspaceRoot}/dist/apps/einvoice/package.json",
-        "{workspaceRoot}/dist/apps/einvoice/pnpm-lock.yaml"
+        "{workspaceRoot}/dist/apps/gateway/package.json",
+        "{workspaceRoot}/dist/apps/gateway/pnpm-lock.yaml"
       ],
       "options": {
         "buildTarget": "build"
@@ -33,7 +33,7 @@
     "copy-workspace-modules": {
       "dependsOn": ["build"],
       "cache": true,
-      "outputs": ["{workspaceRoot}/dist/apps/einvoice/workspace_modules"],
+      "outputs": ["{workspaceRoot}/dist/apps/gateway/workspace_modules"],
       "executor": "@nx/js:copy-workspace-modules",
       "options": {
         "buildTarget": "build"
@@ -49,15 +49,15 @@
       "defaultConfiguration": "development",
       "dependsOn": ["build"],
       "options": {
-        "buildTarget": "einvoice:build",
+        "buildTarget": "gateway:build",
         "runBuildTargetDependencies": false
       },
       "configurations": {
         "development": {
-          "buildTarget": "einvoice:build:development"
+          "buildTarget": "gateway:build:development"
         },
         "production": {
-          "buildTarget": "einvoice:build:production"
+          "buildTarget": "gateway:build:production"
         }
       }
     },
