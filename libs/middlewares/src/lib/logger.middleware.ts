@@ -12,8 +12,7 @@ export class LoggerMiddleware implements NestMiddleware {
     const { method, originalUrl, body } = req;
 
     const now = Date.now();
-    console.log(`Request received at: ${new Date(now).toISOString()}`);
-    (res as any)[MetadataKeys.START_TIME] = now;
+    (req as any)[MetadataKeys.START_TIME] = now;
 
     Logger.log(
       `HTTP >> Start process '${prosessId}' >> path: '${originalUrl}' >> method: '${method}' >> BODY: ${JSON.stringify(
