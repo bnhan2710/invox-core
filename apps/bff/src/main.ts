@@ -19,7 +19,6 @@ async function bootstrap() {
     app.enableCors({
       origin: '*',
     });
-
     // Swagger Documentation
     const config = new DocumentBuilder()
       .setTitle('E-Api GateWay')
@@ -36,7 +35,6 @@ async function bootstrap() {
       .build();
     const documentFactory = () => SwaggerModule.createDocument(app, config);
     SwaggerModule.setup(`${globalPrefix}/docs`, app, documentFactory);
-
     await app.listen(port);
 
     Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`);
