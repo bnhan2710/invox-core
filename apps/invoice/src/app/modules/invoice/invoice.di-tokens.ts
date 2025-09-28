@@ -1,0 +1,2 @@
+export const INVOICE_REPOSITORY = Symbol('INVOICE_REPOSITORY');
+export const INVOICE_SERVICE = Symbol('INVOICE_SERVICE');
