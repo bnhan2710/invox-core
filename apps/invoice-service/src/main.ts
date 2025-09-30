@@ -7,11 +7,9 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { TcpConfiguration } from '@common/configuration/tcp.config';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  console.log('AppModule.CONFIGURATION', AppModule.CONFIGURATION.TCP_SERV.TCP_INVOICE_SERVICE);
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,

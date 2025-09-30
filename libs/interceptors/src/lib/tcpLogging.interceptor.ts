@@ -11,7 +11,9 @@ export class TcpLoggingInterceptor implements NestInterceptor {
     const args = context.getArgs();
 
     const param = args[0]; // first argument is payload of tcp
-    const processId = param.processID;
+    const processId = param.processId;
+    Logger.log('param', param);
+
     Logger.log(
       `TCP » Start process '${processId}' at '${now}' » handler: '${handlerName}' » param: ${JSON.stringify(param)}`,
     );

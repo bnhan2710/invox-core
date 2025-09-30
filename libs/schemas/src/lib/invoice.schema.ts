@@ -52,7 +52,7 @@ export class Invoice extends BaseSchema {
   status: INVOICE_STATUS;
 
   @Prop({ type: [Item] })
-  item: Item[];
+  items: Item[];
 
   @Prop({ type: String, required: false })
   supervisorId: string;

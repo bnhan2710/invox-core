@@ -7,7 +7,8 @@ import { InvoiceModelName, InvoiceModel, Invoice } from '@common/schemas/invoice
 export class InvoiceMongoRepository implements IInvoiceRepository {
   constructor(@InjectModel(InvoiceModelName) private readonly invoiceModel: InvoiceModel) {}
   async create(data: Partial<Invoice>) {
-    return this.invoiceModel.create({ data });
+    console.log('data:>>>>>>>>>>>>>>>>>>>>>>>>>', data);
+    return this.invoiceModel.create(data);
   }
 
   async getById(id: string): Promise<Invoice | null> {

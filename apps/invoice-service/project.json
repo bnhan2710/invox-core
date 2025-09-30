@@ -1,7 +1,7 @@
 {
-  "name": "invoice",
+  "name": "invoice-service",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/invoice/src",
+  "sourceRoot": "apps/invoice-service/src",
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -10,7 +10,7 @@
       "options": {
         "command": "webpack-cli build",
         "args": ["--node-env=production"],
-        "cwd": "apps/invoice"
+        "cwd": "apps/invoice-service"
       },
       "configurations": {
         "development": {
@@ -23,8 +23,8 @@
       "cache": true,
       "executor": "@nx/js:prune-lockfile",
       "outputs": [
-        "{workspaceRoot}/dist/apps/invoice/package.json",
-        "{workspaceRoot}/dist/apps/invoice/pnpm-lock.yaml"
+        "{workspaceRoot}/dist/apps/invoice-service/package.json",
+        "{workspaceRoot}/dist/apps/invoice-service/pnpm-lock.yaml"
       ],
       "options": {
         "buildTarget": "build"
@@ -33,7 +33,7 @@
     "copy-workspace-modules": {
       "dependsOn": ["build"],
       "cache": true,
-      "outputs": ["{workspaceRoot}/dist/apps/invoice/workspace_modules"],
+      "outputs": ["{workspaceRoot}/dist/apps/invoice-service/workspace_modules"],
       "executor": "@nx/js:copy-workspace-modules",
       "options": {
         "buildTarget": "build"
@@ -49,15 +49,15 @@
       "defaultConfiguration": "development",
       "dependsOn": ["build"],
       "options": {
-        "buildTarget": "invoice:build",
+        "buildTarget": "invoice-service:build",
         "runBuildTargetDependencies": false
       },
       "configurations": {
         "development": {
-          "buildTarget": "invoice:build:development"
+          "buildTarget": "invoice-service:build:development"
         },
         "production": {
-          "buildTarget": "invoice:build:production"
+          "buildTarget": "invoice-service:build:production"
         }
       }
     },
