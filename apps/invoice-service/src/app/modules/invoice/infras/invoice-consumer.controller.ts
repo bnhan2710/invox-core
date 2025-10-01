@@ -23,7 +23,6 @@ export class InvoiceTcpController {
     @RequestParams() params: CreateInvoiceTcpRequest,
     @ProcessId() processId: string,
   ): Promise<Response<InvoiceTcpResonse>> {
-    Logger.log('InvoiceTcpController » create » params', params);
     const result = await this.invoiceService.create(params);
     return Response.success<InvoiceTcpResonse>(result);
   }

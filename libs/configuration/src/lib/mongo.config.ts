@@ -48,7 +48,6 @@ export const MongoProvider = MongooseModule.forRootAsync({
       connection.on('disconnected', () => logger.log(' 🪓   🪓   🪓   >>  disconnected'));
       connection.on('reconnected', () => logger.log(' 🧡   🧡   🧡   >>  reconnected'));
       connection.on('disconnecting', () => logger.log(' 🪓   🪓   🪓   >>  disconnecting'));
-
       return connection;
     },
   }),

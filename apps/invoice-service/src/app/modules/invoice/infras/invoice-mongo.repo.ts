@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IInvoiceRepository } from '../interfaces/invoice.port';
 import { InvoiceModelName, InvoiceModel, Invoice } from '@common/schemas/invoice.schema';
@@ -7,8 +7,8 @@ import { InvoiceModelName, InvoiceModel, Invoice } from '@common/schemas/invoice
 export class InvoiceMongoRepository implements IInvoiceRepository {
   constructor(@InjectModel(InvoiceModelName) private readonly invoiceModel: InvoiceModel) {}
   async create(data: Partial<Invoice>) {
-    console.log('data:>>>>>>>>>>>>>>>>>>>>>>>>>', data);
-    return this.invoiceModel.create(data);
+    const createdInvoice = new this.invoiceModel(data);
+    return createdInvoice.save();
   }
 
   async getById(id: string): Promise<Invoice | null> {
