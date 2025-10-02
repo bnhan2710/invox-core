@@ -6,6 +6,7 @@ import { MessagePattern } from '@nestjs/microservices';
 import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
 import { CreateProductTcpRequest, ProductTcpResponse } from '@common/interfaces/tcp/product';
 import { Response } from '@common/interfaces/tcp/common/response.interface';
+import { RequestParams } from '@common/decorators/request-param.decorator';
 
 @Controller()
 @UseInterceptors(TcpLoggingInterceptor)
@@ -13,7 +14,7 @@ export class ProductTcpController {
   constructor(@Inject(PRODUCT_SERVICE) private readonly productService: IProductService) {}
 
   @MessagePattern(TCP_REQUEST_MESSAGE.PRODUCT.CREATE)
-  async create(body: CreateProductTcpRequest): Promise<Response<ProductTcpResponse>> {
+  async create(@RequestParams() body: CreateProductTcpRequest): Promise<Response<ProductTcpResponse>> {
     const result = await this.productService.create(body);
     return Response.success<ProductTcpResponse>(result);
   }

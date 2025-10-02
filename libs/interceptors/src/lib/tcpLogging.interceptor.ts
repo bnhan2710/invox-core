@@ -1,6 +1,8 @@
-import { CallHandler, Injectable, Logger } from '@nestjs/common';
+import { CallHandler, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ExecutionContext, NestInterceptor } from '@nestjs/common';
-import { Observable, tap } from 'rxjs';
+import { catchError, Observable, tap } from 'rxjs';
+import { RpcException } from '@nestjs/microservices';
+import { HTTP_MESSAGE } from '@common/constants/enum/http-message.enum';
 
 @Injectable()
 export class TcpLoggingInterceptor implements NestInterceptor {
@@ -18,16 +20,25 @@ export class TcpLoggingInterceptor implements NestInterceptor {
       `TCP » Start process '${processId}' at '${now}' » handler: '${handlerName}' » param: ${JSON.stringify(param)}`,
     );
 
-    return next
-      .handle()
-      .pipe(
-        tap(() =>
-          Logger.log(
-            `TCP » End process '${processId}' at '${Date.now()}' » handler: '${handlerName}' » duration: ${
-              Date.now() - now
-            }ms`,
-          ),
+    return next.handle().pipe(
+      tap(() =>
+        Logger.log(
+          `TCP » End process '${processId}' at '${Date.now()}' » handler: '${handlerName}' » duration: ${
+            Date.now() - now
+          }ms`,
         ),
-      );
+      ),
+      catchError((err) => {
+        const duration = Date.now() - now;
+        Logger.error(
+          `TCP » Error process '${processId}' at '${Date.now()}' » handler: '${handlerName}' » after duration: ${duration}ms`,
+          err.stack,
+        );
+        throw new RpcException({
+          code: err.status || err.code || err.error?.code || HttpStatus.INTERNAL_SERVER_ERROR,
+          message: err?.response?.message || err.message || HTTP_MESSAGE.INTERNAL_SERVER_ERROR,
+        });
+      }),
+    );
   }
 }
