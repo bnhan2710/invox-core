@@ -5,6 +5,7 @@ import { IsNotEmpty, IsObject } from 'class-validator';
 export enum TCP_SERVICES {
   INVOICE_SERVICE = 'TCP_INVOICE_SERVICE',
   PRODUCT_SERVICE = 'TCP_PRODUCT_SERVICE',
+  IAM_SERVICE = 'TCP_IAM_SERVICE',
 }
 
 export class TcpConfiguration {
@@ -15,6 +16,10 @@ export class TcpConfiguration {
   @IsNotEmpty()
   @IsObject()
   TCP_PRODUCT_SERVICE: TcpClientOptions;
+
+  @IsNotEmpty()
+  @IsObject()
+  TCP_IAM_SERVICE: TcpClientOptions;
 
   constructor() {
     Object.entries(TCP_SERVICES).forEach(([key, service]) => {
