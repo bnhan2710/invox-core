@@ -1,6 +1,6 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { ROLE_REPOSITORY } from '../role.di-tokens';
-import { IRoleRepository, IRoleService } from '../interfaces/role.port';
+import { ROLE_REPOSITORY } from '../../role.di-tokens';
+import { IRoleRepository, IRoleService } from '../../interfaces/role.port';
 
 @Injectable()
 export class RoleService implements IRoleService {

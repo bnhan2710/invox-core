@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { IProductService, IProductRepository } from '../interfaces/product.port';
-import { PRODUCT_REPOSITORY } from '../product.di-tokens';
+import { IProductService, IProductRepository } from '../../interfaces/product.port';
+import { PRODUCT_REPOSITORY } from '../../product.di-tokens';
 import { Product } from '@common/entities/product.entity';
 
 @Injectable()

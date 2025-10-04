@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IInvoiceRepository } from '../interfaces/invoice.port';
 import { InvoiceModelName, InvoiceModel, Invoice } from '@common/schemas/invoice.schema';
