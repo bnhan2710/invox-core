@@ -5,7 +5,7 @@ import { Response } from '@common/interfaces/tcp/common/response.interface';
 import { Request } from '@common/interfaces/tcp/common/request.interface';
 import { RequestParams } from '@common/decorators/request-param.decorator';
 import { ProcessId } from '@common/decorators/processId.decorator';
-import { IInvoiceService } from '../interfaces/invoice.port';
+import { IInvoiceService } from '../application/ports/invoice.port';
 import { INVOICE_SERVICE } from '../invoice.di-tokens';
 import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
 import { CreateInvoiceTcpRequest, InvoiceTcpResonse } from '@common/interfaces/tcp/invoice';

@@ -1,7 +1,7 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseDto } from '@common/interfaces/gateway/response.interface';
-import { CreateInvoiceRequestDto } from '@common/interfaces/gateway/common/invoice';
+import { CreateInvoiceRequestDto } from '@common/interfaces/gateway/invoice';
 import { TCP_SERVICES } from '@common/configuration/tcp.config';
 import { TcpClient } from '@common/interfaces/tcp/common/tcp-client.interface';
 import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';

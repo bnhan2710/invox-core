@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IRoleRepository } from '../interfaces/role.port';
+import { IRoleRepository } from '../application/ports/role.port';
 import { RoleModel, RoleModelName } from '@common/schemas/role.schema';
 
 @Injectable()

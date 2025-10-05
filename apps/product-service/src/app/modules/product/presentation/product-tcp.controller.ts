@@ -1,7 +1,7 @@
 import { Controller, Inject, UseInterceptors } from '@nestjs/common';
 import { TcpLoggingInterceptor } from '@common/interceptors/tcpLogging.interceptor';
 import { PRODUCT_SERVICE } from '../product.di-tokens';
-import { IProductService } from '../interfaces/product.port';
+import { IProductService } from '../application/ports/product.port';
 import { MessagePattern } from '@nestjs/microservices';
 import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
 import { CreateProductTcpRequest, ProductTcpResponse } from '@common/interfaces/tcp/product';

@@ -1,3 +1,3 @@
-import { CreateInvoiceRequestDto } from '../../gateway/common/invoice';
+import { CreateInvoiceRequestDto } from '../../gateway/invoice';
 
 export type CreateInvoiceTcpRequest = CreateInvoiceRequestDto;

@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 import { Model } from 'mongoose';
 
 @Schema({
-  collection: 'users',
+  collection: 'user',
   timestamps: true,
 })
 export class User extends BaseSchema {

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { INVOICE_STATUS } from '@common/constants/enum/invoice.enum';
-import { BaseResponseDto } from '../base-response.dto';
+import { BaseResponseDto } from '../common/base-response.dto';
 
 class ClientResponseDto {
   @ApiProperty()

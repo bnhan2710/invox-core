@@ -7,7 +7,7 @@ import { CreateProductTcpRequest, ProductTcpResponse } from '@common/interfaces/
 import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
 import { ProcessId } from '@common/decorators/processId.decorator';
 import { map } from 'rxjs';
-import { CreateProductRequestDto, ProductResponseDto } from '@common/interfaces/gateway/common/product';
+import { CreateProductRequestDto, ProductResponseDto } from '@common/interfaces/gateway/product';
 
 @ApiTags('Product')
 @Controller('product')
