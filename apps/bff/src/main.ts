@@ -14,7 +14,7 @@ async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     const globalPrefix = AppModule.CONFIGURATION.GLOBAL_PREFIX;
     app.setGlobalPrefix(globalPrefix);
-    const port = AppModule.CONFIGURATION.APP_CONFIG.PORT || 3000;
+    const port = AppModule.CONFIGURATION.APP_CONFIG.PORT || 3400;
 
     app.enableCors({
       origin: '*',

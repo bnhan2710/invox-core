@@ -19,7 +19,7 @@ async function bootstrap() {
     },
   });
 
-  const port = process.env.PRODUCT_PORT || 3401;
+  const port = process.env.PRODUCT_PORT || 3402;
 
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);

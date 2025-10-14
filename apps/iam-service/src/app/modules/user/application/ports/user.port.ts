@@ -1,8 +1,10 @@
+import { CreateKeycloakUserTcpReq } from '@common/interfaces/tcp/authorizer/keycloak-request.interface';
 import { CreateUserTcpRequest } from '@common/interfaces/tcp/user';
 import { User } from '@common/schemas/user.schema';
 
 export interface IUserService {
-  create(params: CreateUserTcpRequest);
+  create(params: CreateUserTcpRequest, processId: string);
+  createKeycloakUser(data: CreateKeycloakUserTcpReq, processId: string): Promise<string>;
 }
 
 export interface IUserRepository {
