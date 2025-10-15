@@ -1,0 +1,1 @@
+export const AUTHORIZER_SERVICE = Symbol('AUTHORIZER_SERVICE');

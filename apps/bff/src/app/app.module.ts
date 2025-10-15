@@ -7,6 +7,7 @@ import { ExceptionInterceptor } from '@common/interceptors/exception.interceptor
 import { InvoiceModule } from './modules/invoice/invoice.module';
 import { ProductModule } from './modules/product/product.module';
 import { UserModule } from './modules/user/user.module';
+import { AuthorizerModule } from './modules/authorizer/authhorizer.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UserModule } from './modules/user/user.module';
     InvoiceModule,
     ProductModule,
     UserModule,
+    AuthorizerModule,
   ],
   controllers: [],
   providers: [

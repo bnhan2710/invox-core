@@ -7,7 +7,7 @@ import { createUserRequestMapping } from '../../mappers';
 import { TCP_SERVICES } from '@common/configuration/tcp.config';
 import { TcpClient } from '@common/interfaces/tcp/common/tcp-client.interface';
 import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
-import { CreateKeycloakUserTcpReq } from '@common/interfaces/tcp/authorizer/keycloak-request.interface';
+import { CreateKeycloakUserTcpReq } from '@common/interfaces/tcp/authorizer/keycloak.request.interface';
 import { firstValueFrom, map } from 'rxjs';
 
 @Injectable()

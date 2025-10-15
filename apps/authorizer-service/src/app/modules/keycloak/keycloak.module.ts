@@ -9,6 +9,6 @@ const dependencies: Provider[] = [{ provide: KEYCLOAK_HTTP, useClass: KeycloakHt
   imports: [],
   controllers: [KeycloakTcpController],
   providers: [...dependencies],
-  exports: [],
+  exports: [KEYCLOAK_HTTP],
 })
 export class KeycloakModule {}

@@ -1,4 +1,8 @@
-import { CreateKeycloakUserResponse, ExchangeClientTokenResponse } from '@common/interfaces/common';
+import {
+  CreateKeycloakUserResponse,
+  ExchangeClientTokenResponse,
+  ExchangeUserTokenResponse,
+} from '@common/interfaces/common';
 import { IKeycloakPort } from '../application/ports/keycloak.port';
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -79,5 +83,23 @@ export class KeycloakHttpAdapter implements IKeycloakPort {
     this.logger.log(`User created in Keycloak with ID: ${userId}`);
 
     return userId;
+  }
+
+  async exchangeUserToken(credentials: { username: string; password: string }): Promise<ExchangeUserTokenResponse> {
+    const body = new URLSearchParams();
+    body.append('client_id', this.clientId);
+    body.append('client_secret', this.clientSecret);
+    body.append('grant_type', 'password');
+    body.append('scope', 'openid');
+    body.append('username', credentials.username);
+    body.append('password', credentials.password);
+
+    const { data } = await this.axiosInstance.post(`/realms/${this.realm}/protocol/openid-connect/token`, body, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    return data;
   }
 }

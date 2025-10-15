@@ -7,7 +7,7 @@ import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.
 import { RequestParams } from '@common/decorators/request-param.decorator';
 import { Response } from '@common/interfaces/tcp/common/response.interface';
 import { KEYCLOAK_HTTP } from '../keycloak.di-tokens';
-import { CreateKeycloakUserTcpReq } from '@common/interfaces/tcp/authorizer/keycloak-request.interface';
+import { CreateKeycloakUserTcpReq } from '@common/interfaces/tcp/authorizer/keycloak.request.interface';
 @Controller()
 @UseInterceptors(TcpLoggingInterceptor)
 export class KeycloakTcpController {

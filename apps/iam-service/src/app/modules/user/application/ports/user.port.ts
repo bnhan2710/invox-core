@@ -1,4 +1,4 @@
-import { CreateKeycloakUserTcpReq } from '@common/interfaces/tcp/authorizer/keycloak-request.interface';
+import { CreateKeycloakUserTcpReq } from '@common/interfaces/tcp/authorizer/keycloak.request.interface';
 import { CreateUserTcpRequest } from '@common/interfaces/tcp/user';
 import { User } from '@common/schemas/user.schema';
 
