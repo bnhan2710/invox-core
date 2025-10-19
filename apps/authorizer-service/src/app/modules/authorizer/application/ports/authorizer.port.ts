@@ -1,7 +1,7 @@
-import { LoginResponseDto } from '@common/interfaces/gateway/authorizer';
-import { AuthorizeResponse, LoginTcpReq, LoginTcpResponse } from '@common/interfaces/tcp/authorizer';
+import { AuthorizeResponse, LoginTcpReq } from '@common/interfaces/tcp/authorizer';
 
 export interface IAuthorizerService {
   login(credentials: LoginTcpReq);
-  verifyUserToken(token: string): Promise<AuthorizeResponse>;
+  verifyUserToken(token: string, processId: string): Promise<AuthorizeResponse>;
+  getUserById(userId: string, processId: string);
 }

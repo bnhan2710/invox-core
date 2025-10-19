@@ -10,6 +10,10 @@ export class AuthorizedMetadata {
   user: User | undefined;
   permissions: PERMISSION[] | undefined;
   jwt: JwtPayload | undefined;
+
+  constructor(payload?: Partial<AuthorizedMetadata>) {
+    Object.assign(this, payload);
+  }
 }
 
 export class AuthorizeResponse {

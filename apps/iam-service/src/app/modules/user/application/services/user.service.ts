@@ -9,6 +9,7 @@ import { TcpClient } from '@common/interfaces/tcp/common/tcp-client.interface';
 import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
 import { CreateKeycloakUserTcpReq } from '@common/interfaces/tcp/authorizer/keycloak.request.interface';
 import { firstValueFrom, map } from 'rxjs';
+import { User } from '@common/schemas/user.schema';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -36,6 +37,10 @@ export class UserService implements IUserService {
 
     const input = createUserRequestMapping(params, userId);
     return this.userRepo.create(input);
+  }
+
+  async getById(userId: string): Promise<User> {
+    return this.userRepo.getByUserId(userId);
   }
 
   createKeycloakUser(data: CreateKeycloakUserTcpReq, processId: string): Promise<string> {

@@ -21,7 +21,8 @@ export class UserMongoRepository implements IUserRepository {
   }
 
   getByUserId(userId: string): Promise<User | null> {
-    return this.userModel.findOne({ userId }).populate('role').exec();
+    console.log('userId', userId);
+    return this.userModel.findOne({ userId }).populate('roles').exec();
   }
 
   async exists(email: string): Promise<boolean> {

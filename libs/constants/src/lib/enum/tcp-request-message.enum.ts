@@ -13,6 +13,7 @@ export enum PRODUCT {
 export enum USER {
   CREATE = 'user.create',
   GET_ALL = 'user.get_all',
+  GET_BY_ID = 'user.get_by_id',
 }
 
 export enum KEYCLOAK {
