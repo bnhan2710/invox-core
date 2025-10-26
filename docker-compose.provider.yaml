@@ -67,6 +67,29 @@ services:
     networks:
       - einvoice-nw
 
+  redis:
+    image: redis:latest
+    container_name: redis_server
+    ports:
+      - '6378:6379'
+    restart: unless-stopped
+    networks:
+      - einvoice-nw
+    volumes:
+      - redis_data:/data
+
+  redis-insight:
+    image: redislabs/redisinsight:latest
+    container_name: redis_insight
+    ports:
+      - '5540:5540'
+    depends_on:
+      - redis
+    networks:
+      - einvoice-nw
+    volumes:
+      - redis_insight_data:/db
+
 volumes:
   mongodb_data:
     driver: local
@@ -75,4 +98,8 @@ volumes:
   pgadmin_data:
     driver: local
   keycloak_data:
+    driver: local
+  redis_data:
+    driver: local
+  redis_insight_data:
     driver: local
