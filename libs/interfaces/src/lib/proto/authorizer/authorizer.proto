@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package GRPC_AUTHORIZER_SERVICE;
+
+service AuthorizerService {
+    rpc CheckPermission (PermissionCheckRequest) returns (PermissionCheckResponse);
+}
+
+message PermissionCheckRequest {
+    string user_id = 1;
+    string resource = 2;
+    string action = 3;
+}
+
+message PermissionCheckResponse {
+    bool is_permitted = 1;
+    string message = 2;
+}   
