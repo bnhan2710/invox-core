@@ -24,7 +24,7 @@ export class UserTcpController {
 
   @MessagePattern(TCP_REQUEST_MESSAGE.USER.GET_BY_ID)
   async getById(@RequestParams() userId: string) {
-    const user = await this.userService.getById(userId);
+    const user = await this.userService.getByUserId(userId);
     return Response.success<User>(user);
   }
 }

@@ -1,4 +1,12 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Logger, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+  Logger,
+  Inject,
+  OnModuleInit,
+} from '@nestjs/common';
 import { firstValueFrom, Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 import { MetadataKeys } from '@common/constants/common.constant';
@@ -12,7 +20,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { AuthorizerService } from '@common/interfaces/grpc/authorizer';
 
 @Injectable()
-export class UserGuard implements CanActivate {
+export class UserGuard implements CanActivate, OnModuleInit {
   private readonly logger = new Logger(UserGuard.name);
   private authorizerService: AuthorizerService;
 

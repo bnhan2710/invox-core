@@ -6,6 +6,7 @@ import { AuthorizerService } from './application/services/authorizer.service';
 import { TCP_SERVICES, TcpProvider } from '@common/configuration/tcp.config';
 import { ClientsModule } from '@nestjs/microservices';
 import { AuthorizeGrpcController } from './presentation/authorizer-grpc.controller';
+import { GRPC_SERVICES, GrpcProvider } from '@common/configuration/grpc.config';
 
 const dependencies: Provider[] = [
   {
@@ -15,7 +16,10 @@ const dependencies: Provider[] = [
 ];
 
 @Module({
-  imports: [KeycloakModule, ClientsModule.registerAsync([TcpProvider(TCP_SERVICES.IAM_SERVICE)])],
+  imports: [
+    KeycloakModule,
+    ClientsModule.registerAsync([TcpProvider(TCP_SERVICES.IAM_SERVICE), GrpcProvider(GRPC_SERVICES.IAM_SERVICE)]),
+  ],
   controllers: [AuthorizerTcpController, AuthorizeGrpcController],
   providers: [...dependencies],
   exports: [],
