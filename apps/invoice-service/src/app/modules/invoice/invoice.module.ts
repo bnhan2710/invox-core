@@ -6,6 +6,8 @@ import { InvoiceService } from './application/services/invoice.service';
 import { InvoiceMongoRepository } from './infrastructure/invoice-mongo.repo';
 import { InvoiceTcpController } from './presentation/invoice-tcp.controller';
 import { MongoProvider } from '@common/configuration/mongo.config';
+import { ClientsModule } from '@nestjs/microservices';
+import { TCP_SERVICES, TcpProvider } from '@common/configuration/tcp.config';
 
 const dependencies: Provider[] = [
   { provide: INVOICE_SERVICE, useClass: InvoiceService },
@@ -13,7 +15,11 @@ const dependencies: Provider[] = [
 ];
 
 @Module({
-  imports: [MongoProvider, MongooseModule.forFeature([InvoiceDestination])],
+  imports: [
+    MongoProvider,
+    MongooseModule.forFeature([InvoiceDestination]),
+    ClientsModule.registerAsync([TcpProvider(TCP_SERVICES.PDF_GENERATOR_SERVICE)]),
+  ],
   controllers: [InvoiceTcpController],
   providers: [...dependencies],
 })

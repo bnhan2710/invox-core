@@ -1,4 +1,4 @@
-import { CreateInvoiceTcpRequest } from '@common/interfaces/tcp/invoice';
+import { CreateInvoiceTcpRequest, SendInvoiceTcpReq } from '@common/interfaces/tcp/invoice';
 import { Invoice } from '@common/schemas/invoice.schema';
 
 export interface IInvoiceRepository {
@@ -10,4 +10,6 @@ export interface IInvoiceRepository {
 
 export interface IInvoiceService {
   create(params: CreateInvoiceTcpRequest);
+  sendById(params: SendInvoiceTcpReq, processId: string);
+  generatorInvoicePdf(data: Invoice, processId: string);
 }
