@@ -47,7 +47,7 @@ export class InvoiceService implements IInvoiceService {
           data,
           processId,
         })
-        .pipe(map((data) => data)),
+        .pipe(map((response) => response.data)),
     );
   }
 }

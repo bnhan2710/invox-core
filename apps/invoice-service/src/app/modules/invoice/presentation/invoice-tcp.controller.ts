@@ -28,7 +28,6 @@ export class InvoiceTcpController {
   @MessagePattern(TCP_REQUEST_MESSAGE.INVOICE.SEND)
   async send(@RequestParams() params: SendInvoiceTcpReq, @ProcessId() processId: string): Promise<Response<string>> {
     const result = await this.invoiceService.sendById(params, processId);
-
-    return Response.success<string>(HTTP_MESSAGE.SENT);
+    return Response.success<string>(result);
   }
 }

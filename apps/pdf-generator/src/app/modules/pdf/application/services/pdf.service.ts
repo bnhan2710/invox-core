@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPdfService } from '../ports/pdf.port';
 import path from 'path';
-import fs from 'fs';
+import fs, { writeFileSync } from 'fs';
 import ejs from 'ejs';
 import puppeteer from 'puppeteer';
 
@@ -37,7 +37,7 @@ export class PdfService implements IPdfService {
 
   async generatePdfFromEjs(templatePath: string, data: any) {
     const html = await this.renderEjsTemplate(templatePath, data);
-
+    Logger.debug(`Generated HTML for PDF: ${html}`, PdfService.name);
     return this.generatePdfFromHtml(html);
   }
 }

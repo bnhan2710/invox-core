@@ -15,9 +15,7 @@ export class InvoicePdfTcpController {
 
   @MessagePattern(TCP_REQUEST_MESSAGE.PDF_GENERATOR.CREATE_INVOICE_PDF)
   async generateInvoicePdf(@RequestParams() params: Invoice): Promise<Response<string>> {
-    Logger.debug(`Generating PDF for Invoice: ${JSON.stringify(params)}`, InvoicePdfTcpController.name);
     const buffer = await this.invoicePdfService.generateInvoicePdf(params);
-    Logger.debug(`Generated PDF buffer length: ${buffer.length}`, InvoicePdfTcpController.name);
     return Response.success<string>(Buffer.from(buffer).toString('base64'));
   }
 }
