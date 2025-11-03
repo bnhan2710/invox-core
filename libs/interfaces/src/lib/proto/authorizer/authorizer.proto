@@ -2,17 +2,46 @@ syntax = "proto3";
 
 package GRPC_AUTHORIZER_SERVICE;
 
+import "iam.proto";
+
+
 service AuthorizerService {
-    rpc CheckPermission (PermissionCheckRequest) returns (PermissionCheckResponse);
+  rpc verifyUserToken (VerifyUserTokenRequest) returns (VerifyUserTokenResponse);
 }
 
-message PermissionCheckRequest {
-    string user_id = 1;
-    string resource = 2;
-    string action = 3;
+message VerifyUserTokenRequest {
+  string token = 1;
+  string processId = 2;
 }
 
-message PermissionCheckResponse {
-    bool is_permitted = 1;
-    string message = 2;
-}   
+message VerifyUserTokenResponse {
+  string code = 1;
+  AuthorizedResponse data = 2;
+  string error = 3;
+}
+
+message AuthorizedResponse {
+  bool valid = 1;
+  AuthorizedMetadata metadata = 2;
+}
+
+
+message JWTPayload {
+  string iss = 1;
+  string aud = 2;
+  int32 iat = 3;
+  int32 exp = 4;
+  string sub = 5;
+  string at_hash = 6;
+  string sid = 7;
+  string nonce = 8;
+  bool isExpired = 9;
+}
+
+
+message AuthorizedMetadata {
+  optional string userId = 1;
+  optional User user = 2;
+  repeated string permissions = 3;
+  optional JWTPayload jwt = 4;
+}

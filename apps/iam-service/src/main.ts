@@ -19,6 +19,15 @@ async function bootstrap() {
     },
   });
 
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.GRPC,
+    options: {
+      package: AppModule.CONFIGURATION.GRPC_SERV.GRPC_IAM_SERVICE.name,
+      protoPath: AppModule.CONFIGURATION.GRPC_SERV.GRPC_IAM_SERVICE.options.protoPath,
+      url: AppModule.CONFIGURATION.GRPC_SERV.GRPC_IAM_SERVICE.options.url,
+    },
+  });
+
   const port = process.env.IAM_PORT || 3403;
 
   const globalPrefix = 'api';

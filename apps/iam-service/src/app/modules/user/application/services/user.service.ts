@@ -39,7 +39,7 @@ export class UserService implements IUserService {
     return this.userRepo.create(input);
   }
 
-  async getById(userId: string): Promise<User> {
+  async getByUserId(userId: string): Promise<User> {
     return this.userRepo.getByUserId(userId);
   }
 

@@ -1,10 +1,11 @@
-import { GrpcOptions, Transport } from '@nestjs/microservices';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ClientsProviderAsyncOptions, GrpcOptions, Transport } from '@nestjs/microservices';
 import { IsNotEmpty, IsObject } from 'class-validator';
 import { join } from 'path';
 
 export enum GRPC_SERVICES {
   AUTHORIZER_SERVICE = 'GRPC_AUTHORIZER_SERVICE',
-  //   USER_ACCESS_SERVICE = 'GRPC_USER_ACCESS_SERVICE',
+  IAM_SERVICE = 'GRPC_IAM_SERVICE',
 }
 
 export class GrpcConfiguration {
@@ -12,16 +13,23 @@ export class GrpcConfiguration {
   @IsNotEmpty()
   GRPC_AUTHORIZER_SERVICE: GrpcOptions & { name: string };
 
-  //   @IsObject()
-  //   @IsNotEmpty()
-  //   GRPC_USER_ACCESS_SERVICE: GrpcOptions & { name: string };
+  @IsObject()
+  @IsNotEmpty()
+  GRPC_IAM_SERVICE: GrpcOptions & { name: string };
 
   constructor() {
     this.GRPC_AUTHORIZER_SERVICE = GrpcConfiguration.setValue({
       key: GRPC_SERVICES.AUTHORIZER_SERVICE,
       protoPath: ['./proto/authorizer.proto'],
-      host: process.env['AUTHORIZER_SERVICE_HOST'] || 'localhost',
-      port: Number(process.env['AUTHORIZER_SERVICE_PORT']) || 5100,
+      host: process.env['AUTHORIZER_SERVICE_GRPC_HOST'] || 'localhost',
+      port: Number(process.env['AUTHORIZER_SERVICE_GRPC_PORT']) || 5100,
+    });
+
+    this.GRPC_IAM_SERVICE = GrpcConfiguration.setValue({
+      key: GRPC_SERVICES.IAM_SERVICE,
+      protoPath: ['./proto/iam.proto'],
+      host: process.env['IAM_SERVICE_GRPC_HOST'] || 'localhost',
+      port: Number(process.env['IAM_SERVICE_GRPC_PORT']) || 5101,
     });
   }
 
@@ -49,3 +57,14 @@ export class GrpcConfiguration {
     };
   }
 }
+
+export const GrpcProvider = (serviceName: GRPC_SERVICES): ClientsProviderAsyncOptions => {
+  return {
+    imports: [ConfigModule],
+    inject: [ConfigService],
+    useFactory: async (configService: ConfigService) => {
+      return configService.get(`GRPC_SERV.${serviceName}`) as GrpcOptions & { name: string };
+    },
+    name: serviceName,
+  };
+};

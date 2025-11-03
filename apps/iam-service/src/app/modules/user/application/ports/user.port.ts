@@ -5,7 +5,7 @@ import { User } from '@common/schemas/user.schema';
 export interface IUserService {
   create(params: CreateUserTcpRequest, processId: string);
   createKeycloakUser(data: CreateKeycloakUserTcpReq, processId: string): Promise<string>;
-  getById(userId: string): Promise<User>;
+  getByUserId(userId: string): Promise<User>;
 }
 
 export interface IUserRepository {
