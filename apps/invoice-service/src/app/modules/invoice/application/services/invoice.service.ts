@@ -11,11 +11,13 @@ import { Invoice } from '@common/schemas/invoice.schema';
 import { firstValueFrom, map } from 'rxjs';
 import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
 import { ObjectId } from 'mongodb';
+import { UploadFileTcpReq } from '@common/interfaces/tcp/media';
 @Injectable()
 export class InvoiceService implements IInvoiceService {
   constructor(
     @Inject(INVOICE_REPOSITORY) private readonly invoiceRepository: IInvoiceRepository,
     @Inject(TCP_SERVICES.PDF_GENERATOR_SERVICE) private readonly pdfGeneratorClient: TcpClient,
+    @Inject(TCP_SERVICES.MEDIA_SERVICE) private readonly mediaClient: TcpClient,
   ) {}
   create(params: CreateInvoiceTcpRequest) {
     const input = invoiceRequestMapping(params);
@@ -31,7 +33,17 @@ export class InvoiceService implements IInvoiceService {
     }
 
     const pdfBase64 = await this.generatorInvoicePdf(invoice, processId);
+
     // uploading file to Cloudinary
+    this.uploadFile(
+      {
+        fileBase64: pdfBase64,
+        fileName: `invoice-${invoice._id}.pdf`,
+      },
+      processId,
+    );
+
+    // update invoice status to SENT
     await this.invoiceRepository.updateById(invoiceId, {
       status: INVOICE_STATUS.SENT,
       supervisorId: new ObjectId(userId),
@@ -48,6 +60,17 @@ export class InvoiceService implements IInvoiceService {
           processId,
         })
         .pipe(map((response) => response.data)),
+    );
+  }
+
+  uploadFile(data: UploadFileTcpReq, processId: string) {
+    return firstValueFrom(
+      this.mediaClient
+        .send<string, UploadFileTcpReq>(TCP_REQUEST_MESSAGE.MEDIA.UPLOAD_FILE, {
+          data,
+          processId,
+        })
+        .pipe(map((data) => data.data)),
     );
   }
 }

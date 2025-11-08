@@ -19,7 +19,7 @@ export class UserHttpController {
   @Post()
   @ApiOkResponse({ type: ResponseDto<string> })
   @ApiOperation({ summary: 'Create a new user' })
-  @Authorization({ secured: true })
+  // @Authorization({ secured: true })
   create(@Body() body: CreateUserRequestDto, @ProcessId() processId: string) {
     return this.iamClient
       .send<string, CreateUserTcpRequest>(TCP_REQUEST_MESSAGE.USER.CREATE, {

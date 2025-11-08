@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CONFIGURATION, TConfiguration } from '../configuration';
 import { ConfigModule } from '@nestjs/config';
+import { MediaModule } from './modules/media/media.module';
 
 @Module({
   imports: [
@@ -8,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
       load: [() => ({ CONFIGURATION })],
     }),
+    MediaModule,
   ],
   controllers: [],
   providers: [],
