@@ -35,7 +35,7 @@ export class InvoiceService implements IInvoiceService {
     const pdfBase64 = await this.generatorInvoicePdf(invoice, processId);
 
     // uploading file to Cloudinary
-    this.uploadFile(
+    const fileUrl = await this.uploadFile(
       {
         fileBase64: pdfBase64,
         fileName: `invoice-${invoice._id}.pdf`,
@@ -47,9 +47,10 @@ export class InvoiceService implements IInvoiceService {
     await this.invoiceRepository.updateById(invoiceId, {
       status: INVOICE_STATUS.SENT,
       supervisorId: new ObjectId(userId),
+      fileUrl,
     });
 
-    return pdfBase64;
+    return fileUrl;
   }
 
   async generatorInvoicePdf(data: Invoice, processId: string) {

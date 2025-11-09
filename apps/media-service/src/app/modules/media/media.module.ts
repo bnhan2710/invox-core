@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MediaController } from './presentation/media-tcp.controller';
-import { MediaService } from '../application/services/media.service';
-import { MEDIA_SERVICE } from './media.tokens';
+import { MediaService } from './application/services/media.service';
+import { MEDIA_SERVICE } from './media.di-tokens';
+import { UploadModule } from '../upload/upload.module';
 
 const dependencies = [
   {
@@ -11,9 +12,9 @@ const dependencies = [
 ];
 
 @Module({
-  imports: [],
+  imports: [UploadModule],
   controllers: [MediaController],
   providers: [...dependencies],
-  exports: [],
+  exports: [MEDIA_SERVICE],
 })
 export class MediaModule {}
