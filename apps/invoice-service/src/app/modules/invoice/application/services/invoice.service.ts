@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { IInvoiceRepository, IInvoiceService } from '../ports/invoice.port';
 import { INVOICE_REPOSITORY } from '../../invoice.di-tokens';
 import { CreateInvoiceTcpRequest, SendInvoiceTcpReq } from '@common/interfaces/tcp/invoice';
-import { invoiceRequestMapping } from '../../mappers';
+import { createSessionMapping, invoiceRequestMapping } from '../../mappers';
 import { INVOICE_STATUS } from '@common/constants/enum/invoice.enum';
 import { ERROR_CODE } from '@common/constants/enum/error-code.enum';
 import { TCP_SERVICES } from '@common/configuration/tcp.config';
@@ -12,12 +12,15 @@ import { firstValueFrom, map } from 'rxjs';
 import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
 import { ObjectId } from 'mongodb';
 import { UploadFileTcpReq } from '@common/interfaces/tcp/media';
+import { PAYMENT_SERVICE } from '../../../payment/payment.di-tokens';
+import { IPaymentService } from '../../../payment/application/ports/payment.port';
 @Injectable()
 export class InvoiceService implements IInvoiceService {
   constructor(
     @Inject(INVOICE_REPOSITORY) private readonly invoiceRepository: IInvoiceRepository,
     @Inject(TCP_SERVICES.PDF_GENERATOR_SERVICE) private readonly pdfGeneratorClient: TcpClient,
     @Inject(TCP_SERVICES.MEDIA_SERVICE) private readonly mediaClient: TcpClient,
+    @Inject(PAYMENT_SERVICE) private readonly paymentService: IPaymentService,
   ) {}
   create(params: CreateInvoiceTcpRequest) {
     const input = invoiceRequestMapping(params);
@@ -43,6 +46,8 @@ export class InvoiceService implements IInvoiceService {
       processId,
     );
 
+    const checkoutSession = await this.paymentService.createCheckoutSession(createSessionMapping(invoice));
+
     // update invoice status to SENT
     await this.invoiceRepository.updateById(invoiceId, {
       status: INVOICE_STATUS.SENT,
@@ -50,7 +55,7 @@ export class InvoiceService implements IInvoiceService {
       fileUrl,
     });
 
-    return fileUrl;
+    return checkoutSession.url;
   }
 
   async generatorInvoicePdf(data: Invoice, processId: string) {
