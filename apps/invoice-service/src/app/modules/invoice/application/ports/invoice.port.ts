@@ -14,4 +14,5 @@ export interface IInvoiceService {
   sendById(params: SendInvoiceTcpReq, processId: string);
   generatorInvoicePdf(data: Invoice, processId: string);
   uploadFile(data: UploadFileTcpReq, processId: string);
+  updateInvoicePaid(invoiceId: string);
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IInvoiceRepository, IInvoiceService } from '../ports/invoice.port';
 import { INVOICE_REPOSITORY } from '../../invoice.di-tokens';
 import { CreateInvoiceTcpRequest, SendInvoiceTcpReq } from '@common/interfaces/tcp/invoice';
@@ -78,5 +78,18 @@ export class InvoiceService implements IInvoiceService {
         })
         .pipe(map((data) => data.data)),
     );
+  }
+
+  async updateInvoicePaid(invoiceId: string) {
+    const invoice = await this.invoiceRepository.getById(invoiceId);
+    if (!invoice) {
+      throw new NotFoundException(ERROR_CODE.INVOICE_NOT_FOUND);
+    }
+
+    await this.invoiceRepository.updateById(invoiceId, {
+      status: INVOICE_STATUS.PAID,
+    });
+
+    return invoiceId;
   }
 }
