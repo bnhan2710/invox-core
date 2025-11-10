@@ -10,7 +10,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   try {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, {
+      rawBody: true, // Enable raw body for webhook
+    });
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     const globalPrefix = AppModule.CONFIGURATION.GLOBAL_PREFIX;
     app.setGlobalPrefix(globalPrefix);

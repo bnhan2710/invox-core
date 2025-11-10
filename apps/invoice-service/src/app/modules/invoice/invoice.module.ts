@@ -8,6 +8,7 @@ import { InvoiceTcpController } from './presentation/invoice-tcp.controller';
 import { MongoProvider } from '@common/configuration/mongo.config';
 import { ClientsModule } from '@nestjs/microservices';
 import { TCP_SERVICES, TcpProvider } from '@common/configuration/tcp.config';
+import { PaymentModule } from '../payment/payment.module';
 
 const dependencies: Provider[] = [
   { provide: INVOICE_SERVICE, useClass: InvoiceService },
@@ -22,6 +23,7 @@ const dependencies: Provider[] = [
       TcpProvider(TCP_SERVICES.PDF_GENERATOR_SERVICE),
       TcpProvider(TCP_SERVICES.MEDIA_SERVICE),
     ]),
+    PaymentModule,
   ],
   controllers: [InvoiceTcpController],
   providers: [...dependencies],
