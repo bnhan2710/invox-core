@@ -14,6 +14,8 @@ import { ObjectId } from 'mongodb';
 import { UploadFileTcpReq } from '@common/interfaces/tcp/media';
 import { PAYMENT_SERVICE } from '../../../payment/payment.di-tokens';
 import { IPaymentService } from '../../../payment/application/ports/payment.port';
+import { KafkaService } from '@common/kafka/kafka.service';
+
 @Injectable()
 export class InvoiceService implements IInvoiceService {
   constructor(
@@ -21,7 +23,9 @@ export class InvoiceService implements IInvoiceService {
     @Inject(TCP_SERVICES.PDF_GENERATOR_SERVICE) private readonly pdfGeneratorClient: TcpClient,
     @Inject(TCP_SERVICES.MEDIA_SERVICE) private readonly mediaClient: TcpClient,
     @Inject(PAYMENT_SERVICE) private readonly paymentService: IPaymentService,
+    private readonly kafkaMailClient: KafkaService,
   ) {}
+
   create(params: CreateInvoiceTcpRequest) {
     const input = invoiceRequestMapping(params);
     return this.invoiceRepository.create(input);
@@ -53,6 +57,13 @@ export class InvoiceService implements IInvoiceService {
       status: INVOICE_STATUS.SENT,
       supervisorId: new ObjectId(userId),
       fileUrl,
+    });
+
+    this.kafkaMailClient.emit('invoice_sent', {
+      invoiceId: invoice._id.toString(),
+      userId,
+      fileUrl,
+      checkoutUrl: checkoutSession.url,
     });
 
     return checkoutSession.url;

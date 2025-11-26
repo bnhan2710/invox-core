@@ -25,10 +25,9 @@ async function bootstrap() {
     },
   });
 
-  const port = process.env.MAIL_PORT || 3407;
-
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
+  const port = process.env.MAIL_PORT || 3000;
 
   await app.startAllMicroservices();
   await app.listen(port);
