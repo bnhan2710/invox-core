@@ -5,8 +5,10 @@
   "scripts": {
     "nx:reset": "nx reset",
     "nx:run-many": "nx run-many",
+    "docker:start:provider": "docker compose -f docker-compose.provider.yaml up -d",
     "dev": "pnpm nx:reset && pnpm nx:run-many -t serve",
-    "dev-lite": "pnpm dev --projects=bff",
+    "dev-lite": "pnpm dev --projects=bff,iam-service,authorizer-service,invoice-service,pdf-generator,media-service,mail-service",
+    "dev-local": "pnpm docker:start:provider && pnpm dev",
     "lint": "pnpm run nx:run-many --target=lint",
     "fix": "pnpm run nx:run-many --target=lint --fix",
     "nx:affected": "nx affected --parallel=2 --nxBail",
