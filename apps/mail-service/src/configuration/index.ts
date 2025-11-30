@@ -4,11 +4,15 @@ import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { KafkaConfiguration } from '@common/configuration/kafka.config';
 import { MailConfiguration } from '@common/configuration/mail.config';
-
+import { TcpConfiguration } from '@common/configuration/tcp.config';
 class Configuration extends BaseConfiguration {
   @ValidateNested()
   @Type(() => AppConfiguration)
   APP_CONFIG = new AppConfiguration();
+
+  @ValidateNested()
+  @Type(() => TcpConfiguration)
+  TCP_SERV = new TcpConfiguration();
 
   @ValidateNested()
   @Type(() => KafkaConfiguration)

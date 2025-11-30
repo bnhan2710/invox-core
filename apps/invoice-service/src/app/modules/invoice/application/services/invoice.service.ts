@@ -15,6 +15,7 @@ import { UploadFileTcpReq } from '@common/interfaces/tcp/media';
 import { PAYMENT_SERVICE } from '../../../payment/payment.di-tokens';
 import { IPaymentService } from '../../../payment/application/ports/payment.port';
 import { KafkaService } from '@common/kafka/kafka.service';
+import { InvoiceSentPayload } from '@common/interfaces/queue/invoice';
 
 @Injectable()
 export class InvoiceService implements IInvoiceService {
@@ -23,7 +24,7 @@ export class InvoiceService implements IInvoiceService {
     @Inject(TCP_SERVICES.PDF_GENERATOR_SERVICE) private readonly pdfGeneratorClient: TcpClient,
     @Inject(TCP_SERVICES.MEDIA_SERVICE) private readonly mediaClient: TcpClient,
     @Inject(PAYMENT_SERVICE) private readonly paymentService: IPaymentService,
-    private readonly kafkaMailClient: KafkaService,
+    private readonly kafkaClient: KafkaService,
   ) {}
 
   create(params: CreateInvoiceTcpRequest) {
@@ -59,14 +60,10 @@ export class InvoiceService implements IInvoiceService {
       fileUrl,
     });
 
-    this.kafkaMailClient.emit('invoice_sent', {
-      invoiceId: invoice._id.toString(),
-      userId,
-      fileUrl,
-      checkoutUrl: checkoutSession.url,
+    this.kafkaClient.emit<InvoiceSentPayload>('invoice_sent', {
+      id: invoiceId,
+      paymentLink: checkoutSession.url,
     });
-
-    return checkoutSession.url;
   }
 
   async generatorInvoicePdf(data: Invoice, processId: string) {
@@ -102,5 +99,9 @@ export class InvoiceService implements IInvoiceService {
     });
 
     return invoiceId;
+  }
+
+  getById(id: string) {
+    return this.invoiceRepository.getById(id);
   }
 }

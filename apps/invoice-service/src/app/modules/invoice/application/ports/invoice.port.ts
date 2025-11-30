@@ -11,6 +11,7 @@ export interface IInvoiceRepository {
 
 export interface IInvoiceService {
   create(params: CreateInvoiceTcpRequest);
+  getById(id: string): Promise<Invoice>;
   sendById(params: SendInvoiceTcpReq, processId: string);
   generatorInvoicePdf(data: Invoice, processId: string);
   uploadFile(data: UploadFileTcpReq, processId: string);

@@ -1,0 +1,36 @@
+<h2>Hello <%= clientName %>,</h2>
+
+<p>
+  You have received an invoice from 
+  <strong><%= senderName %></strong> with the invoice code 
+  <strong><%= invoiceCode %></strong>.
+</p>
+
+<p>
+  Please review the invoice details in the attached PDF file.
+</p>
+
+<% if (paymentLink) { %>
+  <p>
+    For your convenience, you can click the link below to make an online payment:
+  </p>
+
+  <p>
+    <a 
+      href="<%= paymentLink %>" 
+      target="_blank" 
+      style="color: #2196F3; font-weight: bold;"
+    >
+      👉 Pay Now
+    </a>
+  </p>
+<% } %>
+
+<p>
+  If you have any questions, please feel free to contact us via email or our support hotline.
+</p>
+
+<p>
+  Best regards,<br />
+  <strong><%= senderName %></strong>
+</p>
