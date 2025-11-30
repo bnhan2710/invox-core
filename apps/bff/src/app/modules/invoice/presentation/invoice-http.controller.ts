@@ -5,7 +5,7 @@ import { CreateInvoiceRequestDto } from '@common/interfaces/gateway/invoice';
 import { TCP_SERVICES } from '@common/configuration/tcp.config';
 import { TcpClient } from '@common/interfaces/tcp/common/tcp-client.interface';
 import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
-import { CreateInvoiceTcpRequest, InvoiceTcpResonse, SendInvoiceTcpReq } from '@common/interfaces/tcp/invoice';
+import { CreateInvoiceTcpRequest, InvoiceTcpResponse, SendInvoiceTcpReq } from '@common/interfaces/tcp/invoice';
 import { ProcessId } from '@common/decorators/processId.decorator';
 import { map } from 'rxjs';
 import { Authorization } from '@common/decorators/authorizer.decorator';
@@ -30,7 +30,7 @@ export class InvoiceHttpController {
   ) {
     Logger.debug(`User Data in Invoice Controller: ${JSON.stringify(userData)}`, InvoiceHttpController.name);
     return this.invoiceClient
-      .send<InvoiceTcpResonse, CreateInvoiceTcpRequest>(TCP_REQUEST_MESSAGE.INVOICE.CREATE, {
+      .send<InvoiceTcpResponse, CreateInvoiceTcpRequest>(TCP_REQUEST_MESSAGE.INVOICE.CREATE, {
         data: body,
         processId,
       })

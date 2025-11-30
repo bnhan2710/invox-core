@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import path from 'path';
 import { IPdfService } from '../../../pdf/application/ports/pdf.port';
 import { PDF_SERVICE } from '../../../pdf/pdf.di-tokens';

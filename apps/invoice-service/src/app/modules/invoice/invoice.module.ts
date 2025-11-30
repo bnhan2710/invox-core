@@ -9,6 +9,8 @@ import { MongoProvider } from '@common/configuration/mongo.config';
 import { ClientsModule } from '@nestjs/microservices';
 import { TCP_SERVICES, TcpProvider } from '@common/configuration/tcp.config';
 import { PaymentModule } from '../payment/payment.module';
+import { KafkaModule } from '@common/kafka/kafka.module';
+import { QUEUE_SERVICES } from '@common/constants/enum/queue/queue.enum';
 
 const dependencies: Provider[] = [
   { provide: INVOICE_SERVICE, useClass: InvoiceService },
@@ -24,6 +26,7 @@ const dependencies: Provider[] = [
       TcpProvider(TCP_SERVICES.MEDIA_SERVICE),
     ]),
     PaymentModule,
+    KafkaModule.register(QUEUE_SERVICES.INVOICE),
   ],
   controllers: [InvoiceTcpController],
   providers: [...dependencies],

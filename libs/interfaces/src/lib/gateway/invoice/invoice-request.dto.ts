@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayNotEmpty, IsArray, IsEmail, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class ClientRequestDto {
@@ -26,19 +35,22 @@ class ItemRequestDto {
   productId: string;
 
   @ApiProperty()
-  @IsNumber()
+  @IsPositive()
   quantity: number;
 
   @ApiProperty()
   @IsNumber()
+  @IsPositive()
   unitPrice: number;
 
   @ApiProperty()
   @IsNumber()
+  @IsPositive()
   vatRate: number;
 
   @ApiProperty()
   @IsNumber()
+  @IsPositive()
   total: number;
 
   @ApiProperty()
