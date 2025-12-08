@@ -1,8 +1,7 @@
-import { Controller, Get, Inject, Logger, UseInterceptors } from '@nestjs/common';
+import { Controller, Inject, UseInterceptors } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { TcpLoggingInterceptor } from '@common/interceptors/tcpLogging.interceptor';
 import { Response } from '@common/interfaces/tcp/common/response.interface';
-import { Request } from '@common/interfaces/tcp/common/request.interface';
 import { RequestParams } from '@common/decorators/request-param.decorator';
 import { ProcessId } from '@common/decorators/processId.decorator';
 import { IInvoiceService } from '../application/ports/invoice.port';

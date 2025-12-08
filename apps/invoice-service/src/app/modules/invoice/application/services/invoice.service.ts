@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IInvoiceRepository, IInvoiceService } from '../ports/invoice.port';
 import { INVOICE_REPOSITORY } from '../../invoice.di-tokens';
 import { CreateInvoiceTcpRequest, SendInvoiceTcpReq } from '@common/interfaces/tcp/invoice';
@@ -60,8 +60,6 @@ export class InvoiceService implements IInvoiceService {
       if (!invoice) {
         throw new NotFoundException(ERROR_CODE.INVOICE_NOT_FOUND);
       }
-
-      Logger.debug(`Processing invoice send for invoice ID: ${invoiceId} in process ID: ${processId}`);
       //call pdf generator service to generate pdf
       const pdfBase64 = await this.generatorInvoicePdf(invoice, processId);
 

@@ -11,7 +11,7 @@ import { TCP_SERVICES, TcpProvider } from '@common/configuration/tcp.config';
 import { PaymentModule } from '../payment/payment.module';
 import { KafkaModule } from '@common/kafka/kafka.module';
 import { QUEUE_SERVICES } from '@common/constants/enum/queue/queue.enum';
-import { InvoiceProcessKafkaConsumer } from './presentation/invoivoice-kafka.consumer';
+import { InvoiceProcessKafkaConsumer } from './presentation/invoice-kafka.consumer';
 
 const dependencies: Provider[] = [
   { provide: INVOICE_SERVICE, useClass: InvoiceService },
