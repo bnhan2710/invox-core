@@ -1,8 +1,8 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IInvoiceRepository, IInvoiceService } from '../ports/invoice.port';
-import { INVOICE_REPOSITORY } from '../../invoice.di-tokens';
+import { INVOICE_EVENT_PUBLISHER, INVOICE_REPOSITORY } from '../../invoice.di-tokens';
 import { CreateInvoiceTcpRequest, SendInvoiceTcpReq } from '@common/interfaces/tcp/invoice';
-import { createSessionMapping, invoiceRequestMapping } from '../../mappers';
+import { createSessionMapping, invoiceRequestMapping } from '../mappers';
 import { INVOICE_STATUS } from '@common/constants/enum/invoice.enum';
 import { ERROR_CODE } from '@common/constants/enum/error-code.enum';
 import { TCP_SERVICES } from '@common/configuration/tcp.config';
@@ -14,9 +14,7 @@ import { ObjectId } from 'mongodb';
 import { UploadFileTcpReq } from '@common/interfaces/tcp/media';
 import { PAYMENT_SERVICE } from '../../../payment/payment.di-tokens';
 import { IPaymentService } from '../../../payment/application/ports/payment.port';
-import { KafkaService } from '@common/kafka/kafka.service';
-import { InvoiceProcessPayload, InvoiceSentPayload } from '@common/interfaces/queue/invoice';
-
+import { IInvoiceEventPublisher } from '../ports/invoice.port';
 @Injectable()
 export class InvoiceService implements IInvoiceService {
   constructor(
@@ -24,7 +22,7 @@ export class InvoiceService implements IInvoiceService {
     @Inject(TCP_SERVICES.PDF_GENERATOR_SERVICE) private readonly pdfGeneratorClient: TcpClient,
     @Inject(TCP_SERVICES.MEDIA_SERVICE) private readonly mediaClient: TcpClient,
     @Inject(PAYMENT_SERVICE) private readonly paymentService: IPaymentService,
-    private readonly kafkaClient: KafkaService,
+    @Inject(INVOICE_EVENT_PUBLISHER) private readonly invoiceEventPublisher: IInvoiceEventPublisher,
   ) {}
 
   create(params: CreateInvoiceTcpRequest) {
@@ -47,7 +45,7 @@ export class InvoiceService implements IInvoiceService {
     });
 
     //emit event to kafka for processing
-    this.kafkaClient.emit<InvoiceProcessPayload>('invoice_process_send', {
+    this.invoiceEventPublisher.publishInvoiceProcessSendEvent({
       invoiceId,
       userId,
       processId,
@@ -82,7 +80,7 @@ export class InvoiceService implements IInvoiceService {
       });
 
       //emit event to kafka for sending email
-      this.kafkaClient.emit<InvoiceSentPayload>('invoice_sent', {
+      this.invoiceEventPublisher.publishInvoiceSentEvent({
         id: invoiceId,
         paymentLink: checkoutSession.url,
       });

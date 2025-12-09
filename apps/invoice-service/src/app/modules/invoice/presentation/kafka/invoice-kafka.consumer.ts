@@ -1,6 +1,6 @@
 import { Controller, Inject } from '@nestjs/common';
-import { INVOICE_SERVICE } from '../invoice.di-tokens';
-import { IInvoiceService } from '../application/ports/invoice.port';
+import { INVOICE_SERVICE } from '../../invoice.di-tokens';
+import { IInvoiceService } from '../../application/ports/invoice.port';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { InvoiceProcessPayload } from '@common/interfaces/queue/invoice';
 
