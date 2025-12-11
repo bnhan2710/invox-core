@@ -57,7 +57,6 @@ export class AuthorizerService implements IAuthorizerService, OnModuleInit {
       const publicKey = key.getPublicKey();
       const payload = jwt.verify(token, publicKey, { algorithms: ['RS256'] }) as JwtPayload;
       const user = await this.userValidation(payload.sub, processId);
-      this.logger.debug(`Token verified successfully ${user.roles}`);
       return {
         valid: true,
         metadata: {

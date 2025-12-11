@@ -1,8 +1,8 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IInvoiceRepository, IInvoiceService } from '../ports/invoice.port';
-import { INVOICE_REPOSITORY } from '../../invoice.di-tokens';
+import { INVOICE_EVENT_PUBLISHER, INVOICE_REPOSITORY } from '../../invoice.di-tokens';
 import { CreateInvoiceTcpRequest, SendInvoiceTcpReq } from '@common/interfaces/tcp/invoice';
-import { createSessionMapping, invoiceRequestMapping } from '../../mappers';
+import { createSessionMapping, invoiceRequestMapping } from '../mappers';
 import { INVOICE_STATUS } from '@common/constants/enum/invoice.enum';
 import { ERROR_CODE } from '@common/constants/enum/error-code.enum';
 import { TCP_SERVICES } from '@common/configuration/tcp.config';
@@ -14,9 +14,7 @@ import { ObjectId } from 'mongodb';
 import { UploadFileTcpReq } from '@common/interfaces/tcp/media';
 import { PAYMENT_SERVICE } from '../../../payment/payment.di-tokens';
 import { IPaymentService } from '../../../payment/application/ports/payment.port';
-import { KafkaService } from '@common/kafka/kafka.service';
-import { InvoiceSentPayload } from '@common/interfaces/queue/invoice';
-
+import { IInvoiceEventPublisher } from '../ports/invoice.port';
 @Injectable()
 export class InvoiceService implements IInvoiceService {
   constructor(
@@ -24,7 +22,7 @@ export class InvoiceService implements IInvoiceService {
     @Inject(TCP_SERVICES.PDF_GENERATOR_SERVICE) private readonly pdfGeneratorClient: TcpClient,
     @Inject(TCP_SERVICES.MEDIA_SERVICE) private readonly mediaClient: TcpClient,
     @Inject(PAYMENT_SERVICE) private readonly paymentService: IPaymentService,
-    private readonly kafkaClient: KafkaService,
+    @Inject(INVOICE_EVENT_PUBLISHER) private readonly invoiceEventPublisher: IInvoiceEventPublisher,
   ) {}
 
   create(params: CreateInvoiceTcpRequest) {
@@ -40,30 +38,59 @@ export class InvoiceService implements IInvoiceService {
       throw new BadRequestException(ERROR_CODE.INVOICE_CAN_NOT_BE_SENT);
     }
 
-    const pdfBase64 = await this.generatorInvoicePdf(invoice, processId);
-
-    // uploading file to Cloudinary
-    const fileUrl = await this.uploadFile(
-      {
-        fileBase64: pdfBase64,
-        fileName: `invoice-${invoice._id}.pdf`,
-      },
-      processId,
-    );
-
-    const checkoutSession = await this.paymentService.createCheckoutSession(createSessionMapping(invoice));
-
-    // update invoice status to SENT
+    //update invoice status to PROCESSING
     await this.invoiceRepository.updateById(invoiceId, {
-      status: INVOICE_STATUS.SENT,
+      status: INVOICE_STATUS.PROCESSING,
       supervisorId: new ObjectId(userId),
-      fileUrl,
     });
 
-    this.kafkaClient.emit<InvoiceSentPayload>('invoice_sent', {
-      id: invoiceId,
-      paymentLink: checkoutSession.url,
+    //emit event to kafka for processing
+    this.invoiceEventPublisher.publishInvoiceProcessSendEvent({
+      invoiceId,
+      userId,
+      processId,
     });
+  }
+
+  async processInvoiceSend(invoiceId: string, processId: string) {
+    try {
+      const invoice = await this.invoiceRepository.getById(invoiceId);
+      if (!invoice) {
+        throw new NotFoundException(ERROR_CODE.INVOICE_NOT_FOUND);
+      }
+      //call pdf generator service to generate pdf
+      const pdfBase64 = await this.generatorInvoicePdf(invoice, processId);
+
+      // call media service to upload file
+      const fileUrl = await this.uploadFile(
+        {
+          fileBase64: pdfBase64,
+          fileName: `invoice-${invoice._id}.pdf`,
+        },
+        processId,
+      );
+
+      // call payment service (same module) to create checkout session
+      const checkoutSession = await this.paymentService.createCheckoutSession(createSessionMapping(invoice));
+
+      //update status to SENT
+      await this.invoiceRepository.updateById(invoiceId, {
+        status: INVOICE_STATUS.SENT,
+        fileUrl,
+      });
+
+      //emit event to kafka for sending email
+      this.invoiceEventPublisher.publishInvoiceSentEvent({
+        id: invoiceId,
+        paymentLink: checkoutSession.url,
+      });
+    } catch (error) {
+      //update invoice status to failed
+      await this.invoiceRepository.updateById(invoiceId, {
+        status: INVOICE_STATUS.FAILED,
+      });
+      throw error;
+    }
   }
 
   async generatorInvoicePdf(data: Invoice, processId: string) {

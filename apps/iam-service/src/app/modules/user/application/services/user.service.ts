@@ -3,7 +3,7 @@ import { IUserRepository, IUserService } from '../ports/user.port';
 import { USER_REPOSITORY } from '../../user.di-tokens';
 import { CreateUserTcpRequest } from '@common/interfaces/tcp/user';
 import { ERROR_CODE } from '@common/constants/enum/error-code.enum';
-import { createUserRequestMapping } from '../../mappers';
+import { createUserRequestMapping } from '../mappers';
 import { TCP_SERVICES } from '@common/configuration/tcp.config';
 import { TcpClient } from '@common/interfaces/tcp/common/tcp-client.interface';
 import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';

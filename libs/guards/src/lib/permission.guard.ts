@@ -18,10 +18,6 @@ export class PermissionGuard implements CanActivate {
     const userData = request[MetadataKeys.USER_DATA] as AuthorizeResponse;
     console.log('User Data in Permission Guard:', userData.metadata);
     const userPermissions = userData.metadata.permissions as PERMISSION[];
-
-    Logger.debug(`User permissions: ${userPermissions}`, PermissionGuard.name);
-    Logger.debug(`Required permissions: ${requiredPermissions}`, PermissionGuard.name);
-
     const isValid = requiredPermissions.every((permission) => userPermissions?.includes(permission));
 
     if (!isValid) {

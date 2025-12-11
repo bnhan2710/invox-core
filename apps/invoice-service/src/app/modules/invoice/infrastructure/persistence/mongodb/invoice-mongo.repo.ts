@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IInvoiceRepository } from '../application/ports/invoice.port';
+import { IInvoiceRepository } from '../../../application/ports/invoice.port';
 import { InvoiceModelName, InvoiceModel, Invoice } from '@common/schemas/invoice.schema';
 
 @Injectable()

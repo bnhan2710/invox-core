@@ -7,6 +7,7 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { QUEUE_GROUPS } from '@common/constants/enum/queue/queue.enum';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,6 +17,19 @@ async function bootstrap() {
     options: {
       port: AppModule.CONFIGURATION.TCP_SERV.TCP_INVOICE_SERVICE.options.port,
       host: AppModule.CONFIGURATION.TCP_SERV.TCP_INVOICE_SERVICE.options.host,
+    },
+  });
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        brokers: [AppModule.CONFIGURATION.KAFKA_CONFIG.URL],
+      },
+      consumer: {
+        groupId: QUEUE_GROUPS.INVOICE,
+        allowAutoTopicCreation: true,
+      },
     },
   });
 

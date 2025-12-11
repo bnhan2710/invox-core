@@ -2,105 +2,149 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <title>Invoice</title>
     <style>
       body {
-        font-family: 'Segoe UI', sans-serif;
-        padding: 40px;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         color: #333;
+        line-height: 1.6;
+        padding: 20px;
+      }
+
+      .invoice-box {
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        border: 1px solid #eee;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+        font-size: 16px;
       }
 
       .header {
-        border-bottom: 3px solid #4caf50;
-        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 25px;
       }
 
       .header h1 {
-        color: #4caf50;
+        color: #4CAF50; 
+        font-size: 36px;
         margin: 0;
+        line-height: 1;
+      }
+      
+      .client-info {
+        text-align: right;
+        font-size: 14px;
       }
 
-      .meta,
-      .totals {
-        margin-top: 20px;
+      .client-info div {
+        margin-bottom: 2px;
       }
 
-      .meta div,
-      .totals div {
-        margin-bottom: 5px;
-      }
-
-      table {
+      .item-table {
         width: 100%;
+        line-height: inherit;
+        text-align: left;
         border-collapse: collapse;
         margin-top: 30px;
       }
 
-      th {
-        background-color: #4caf50;
-        color: white;
+      .item-table th,
+      .item-table td {
         padding: 10px;
-        text-align: left;
+        border-bottom: 1px solid #eee;
       }
 
-      td {
-        border: 1px solid #ccc;
-        padding: 8px;
+      .item-table th {
+        background-color: #4CAF50;
+        color: white;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 14px;
+      }
+
+      .item-table tr.total-row td {
+        border-top: 2px solid #4CAF50;
+        font-weight: bold;
+      }
+
+
+      .totals {
+        text-align: right;
+        margin-top: 20px;
+        width: 100%;
+      }
+      
+      .totals div {
+        padding: 5px 0;
+        font-size: 16px;
+      }
+
+      .totals .total-amount {
+        font-size: 18px;
+        font-weight: bold;
+        color: #4CAF50;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
       }
 
       .right {
         text-align: right;
       }
-
+      
       .status {
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #eee;
-        border-left: 5px solid #4caf50;
+        display: inline-block;
+        padding: 6px 12px;
+        background-color: #f0f9e9; 
+        color: #4CAF50;
         font-weight: bold;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-size: 14px;
+        margin-top: 15px;
       }
 
-      .footer {
-        margin-top: 40px;
-        font-size: 12px;
-        text-align: center;
-        color: #888;
-      }
     </style>
   </head>
   <body>
-    <div class="header">
-      <h1>Invoice</h1>
-      <div><strong>Client:</strong> <%= client.name %></div>
-      <div><strong>Email:</strong> <%= client.email %></div>
+    <div class="invoice-box">
+      <div class="header">
+        <h1>INVOICE</h1>
+        <div class="client-info">
+          <div><strong>Client:</strong> <%= client.name %></div>
+          <div><strong>Email:</strong> <%= client.email %></div>
+        </div>
+      </div>
+      
+      <span class="status"><%= status %></span>
+
+      <table class="item-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th class="right">Quantity</th>
+            <th class="right">Unit Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach(item => { %>
+          <tr>
+            <td><%= item.name %></td>
+            <td class="right"><%= item.quantity %></td>
+            <td class="right">$<%= item.unitPrice.toFixed(2) %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <div class="totals">
+        <div>Subtotal: $<%= subtotal.toFixed(2) %></div>
+        <div>VAT: $<%= vatAmount.toFixed(2) %></div>
+        <div class="total-amount">TOTAL: **$<%= totalAmount.toFixed(2) %>**</div>
+      </div>
+
     </div>
-
-    <div class="status">Status: <%= status %></div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>Quantity</th>
-          <th class="right">Price</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% items.forEach(item => { %>
-        <tr>
-          <td><%= item.name %></td>
-          <td><%= item.quantity %></td>
-          <td class="right">$<%= item.unitPrice.toFixed(2) %></td>
-        </tr>
-        <% }) %>
-      </tbody>
-    </table>
-
-    <div class="totals right">
-      <div><strong>Subtotal:</strong> $<%= subtotal.toFixed(2) %></div>
-      <div><strong>VAT:</strong> $<%= vatAmount.toFixed(2) %></div>
-      <div><strong>Total:</strong> <strong>$<%= totalAmount.toFixed(2) %></strong></div>
-    </div>
-
-    <div class="footer">Thank you for your business!</div>
   </body>
 </html>
