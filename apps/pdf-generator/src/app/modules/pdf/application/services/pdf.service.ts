@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { IPdfService } from '../ports/pdf.port';
 import path from 'path';
-import fs, { writeFileSync } from 'fs';
+import fs from 'fs';
 import ejs from 'ejs';
 import puppeteer from 'puppeteer';
 

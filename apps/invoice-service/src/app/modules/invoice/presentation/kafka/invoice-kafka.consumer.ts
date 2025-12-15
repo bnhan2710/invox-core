@@ -1,19 +1,20 @@
 import { Controller, Inject } from '@nestjs/common';
-import { INVOICE_SERVICE } from '../../invoice.di-tokens';
-import { IInvoiceService } from '../../application/ports/invoice.port';
+import { SEND_INVOICE_SAGA_COORDINATOR } from '../../invoice.di-tokens';
+import { ISagaCoordinator } from '../../application/ports/invoice.port';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { InvoiceProcessPayload } from '@common/interfaces/queue/invoice';
+import { INVOICE_EVENTS } from '@common/constants/enum/event/event.enum';
 
 @Controller()
 export class InvoiceProcessKafkaConsumer {
   constructor(
-    @Inject(INVOICE_SERVICE)
-    private readonly invoiceService: IInvoiceService,
+    @Inject(SEND_INVOICE_SAGA_COORDINATOR)
+    private readonly saga: ISagaCoordinator,
   ) {}
 
-  @MessagePattern('invoice_process_send')
+  @MessagePattern(INVOICE_EVENTS.INVOICE_PROCESS_SEND_EVENT)
   async handleInvoiceProcess(@Payload() payload: InvoiceProcessPayload) {
     const { invoiceId, processId } = payload;
-    await this.invoiceService.processInvoiceSend(invoiceId, processId);
+    await this.saga.execute(invoiceId, processId);
   }
 }

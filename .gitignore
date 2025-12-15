@@ -46,4 +46,6 @@ Thumbs.db
 .env
 # docker data
 docker/**/docker_data
+
 digram
+demo.md
