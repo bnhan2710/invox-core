@@ -23,7 +23,7 @@ export class CloudinaryAdapter implements IUploadPort {
       const uploadStream = this.cloudinaryInstance.uploader.upload_stream(
         {
           folder: 'einvoice-app',
-          resource_type: 'auto',
+          resource_type: 'raw',
           public_id: fileName,
         },
         (error, result) => {
@@ -38,5 +38,27 @@ export class CloudinaryAdapter implements IUploadPort {
 
       streamifier.createReadStream(fileBuffer).pipe(uploadStream);
     });
+  }
+
+  async deleteFile(fileUrl: string): Promise<boolean> {
+    try {
+      const publicId = this.extractPublicIdFromUrl(fileUrl);
+      const result = await this.cloudinaryInstance.uploader.destroy(publicId, {
+        resource_type: 'raw',
+      });
+      Logger.log('Delete result:', result);
+      return result.result === 'ok';
+    } catch (error) {
+      Logger.error('Delete error:', error);
+      return false;
+    }
+  }
+
+  private extractPublicIdFromUrl(url: string): string {
+    const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[^/.]+$/);
+    if (!match) {
+      throw new Error('Invalid Cloudinary URL');
+    }
+    return match[1];
   }
 }

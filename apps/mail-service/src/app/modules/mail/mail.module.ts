@@ -20,7 +20,7 @@ const dependencies: Provider[] = [
 
 @Module({
   imports: [ClientsModule.registerAsync([TcpProvider(TCP_SERVICES.INVOICE_SERVICE)]), MailTemplateModule],
-  providers: dependencies,
+  providers: [...dependencies],
   controllers: [MailKafkaConsumer],
 })
 export class MailModule {}

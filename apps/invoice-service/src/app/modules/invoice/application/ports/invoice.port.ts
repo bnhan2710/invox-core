@@ -1,6 +1,5 @@
 import { CreateInvoiceTcpRequest, SendInvoiceTcpReq } from '@common/interfaces/tcp/invoice';
 import { Invoice } from '@common/schemas/invoice.schema';
-import { UploadFileTcpReq } from '@common/interfaces/tcp/media';
 import { InvoiceProcessPayload, InvoiceSentPayload } from '@common/interfaces/queue/invoice';
 
 export interface IInvoiceRepository {
@@ -14,13 +13,14 @@ export interface IInvoiceService {
   create(params: CreateInvoiceTcpRequest);
   getById(id: string): Promise<Invoice>;
   sendById(params: SendInvoiceTcpReq, processId: string);
-  processInvoiceSend(invoiceId: string, processId: string);
-  generatorInvoicePdf(data: Invoice, processId: string);
-  uploadFile(data: UploadFileTcpReq, processId: string);
   updateInvoicePaid(invoiceId: string);
 }
 
 export interface IInvoiceEventPublisher {
   publishInvoiceProcessSendEvent(payload: InvoiceProcessPayload);
   publishInvoiceSentEvent(payload: InvoiceSentPayload);
+}
+
+export interface ISagaCoordinator {
+  execute(invoiceId: string, processId: string);
 }

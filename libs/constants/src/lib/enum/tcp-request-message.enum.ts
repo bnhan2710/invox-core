@@ -33,6 +33,7 @@ export enum PDF_GENERATOR {
 
 export enum MEDIA {
   UPLOAD_FILE = 'media.upload_file',
+  DELETE_FILE = 'media.delete_file',
 }
 
 export const TCP_REQUEST_MESSAGE = {

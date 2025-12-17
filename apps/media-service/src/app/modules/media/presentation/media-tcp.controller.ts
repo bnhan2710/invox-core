@@ -17,4 +17,10 @@ export class MediaController {
     const result = await this.mediaService.uploadFile(params);
     return Response.success<string>(result);
   }
+
+  @MessagePattern(TCP_REQUEST_MESSAGE.MEDIA.DELETE_FILE)
+  async deleteFile(@RequestParams() fileUrl: string): Promise<Response<boolean>> {
+    const result = await this.mediaService.deleteFile(fileUrl);
+    return Response.success<boolean>(result);
+  }
 }

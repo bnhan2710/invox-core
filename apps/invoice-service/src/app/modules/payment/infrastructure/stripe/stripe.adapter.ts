@@ -9,4 +9,8 @@ export class StripeAdapter implements IPaymentService {
   async createCheckoutSession(params: CreateCheckoutSessionRequest) {
     return this.stripeService.createCheckoutSession(params);
   }
+
+  async cancelCheckoutSession(sessionId: string) {
+    return this.stripeService.cancelCheckoutSession(sessionId);
+  }
 }

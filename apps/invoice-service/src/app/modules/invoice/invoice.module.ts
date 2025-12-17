@@ -14,11 +14,14 @@ import { QUEUE_SERVICES } from '@common/constants/enum/queue/queue.enum';
 import { InvoiceProcessKafkaConsumer } from './presentation/kafka/invoice-kafka.consumer';
 import { InvoiceKafkaPublisher } from './infrastructure/messaging/kafka/invoice-kafka.publisher';
 import { INVOICE_EVENT_PUBLISHER } from './invoice.di-tokens';
+import { SEND_INVOICE_SAGA_COORDINATOR } from './invoice.di-tokens';
+import { SendInvoiceSagaCoordinator } from './application/sagas/invoice-send-saga-coordinator';
 
 const dependencies: Provider[] = [
   { provide: INVOICE_SERVICE, useClass: InvoiceService },
   { provide: INVOICE_REPOSITORY, useClass: InvoiceMongoRepository },
   { provide: INVOICE_EVENT_PUBLISHER, useClass: InvoiceKafkaPublisher },
+  { provide: SEND_INVOICE_SAGA_COORDINATOR, useClass: SendInvoiceSagaCoordinator },
 ];
 
 @Module({

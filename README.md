@@ -1,81 +1,233 @@
-# Einvoice
+# Einvoice – Microservice Monorepo
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+Einvoice is an electronic invoicing platform built as a **microservice** system on top of an **Nx monorepo**, using **NestJS** as the primary backend framework.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+This repository contains:
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/nest?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+- A **BFF (Backend for Frontend)** for web / client applications
+- Domain microservices: **IAM**, **Authorizer**, **Invoice**, **Product**, **Media**, **PDF Generator**, **Mail**, etc.
+- Per-service **Clean Architecture / Hexagonal** layering (application, infrastructure, presentation)
+- **Event-driven communication** with Kafka and data persistence primarily in MongoDB
 
-## Finish your CI setup
+---
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/MrN5XJ6eeh)
+## High-Level Architecture
 
-## Run tasks
+The workspace is organized as an Nx monorepo:
 
-To run the dev server for your app, use:
+- `apps/`
 
-```sh
-npx nx serve bff
+  - `bff` – API gateway / BFF for the frontend
+  - `iam-service` – Identity & Access Management
+  - `authorizer-service` – Authorization & policy handling
+  - `invoice-service` – Invoice lifecycle, payment integration and email triggers
+  - `product-service` – Product / catalog management
+  - `pdf-generator` – Invoice PDF rendering service
+  - `media-service` – File upload and storage handling
+  - `mail-service` – Email sending (e.g. sending invoices)
+
+- `libs/`
+  - `constants` – Shared enums, error codes and constants
+  - `schemas` – MongoDB schemas (Invoice, User, Product, etc.)
+  - `configuration` – Shared configuration modules (Mongo, Postgres, Redis, Kafka, TCP/GRPC, throttling, etc.)
+  - `interfaces` – DTOs, TCP/Kafka payload contracts, gateway DTOs
+  - `kafka` – Kafka module and wrapper service
+  - Other shared libraries: guards, interceptors, middlewares, decorators, utilities, …
+
+**Service communication**
+
+- **TCP / gRPC** for synchronous service-to-service communication
+- **Kafka** for asynchronous, event-driven flows (e.g. `invoice_process_send`, `invoice_sent` topics)
+
+**Infrastructure & providers**
+
+- MongoDB as the primary persistence layer
+- Kafka, Redis, Postgres and other providers orchestrated via `docker-compose.provider.yaml`
+
+---
+
+## Prerequisites
+
+- **Node.js** >= 22
+- **pnpm** (recommended) – npm or yarn can work, but scripts assume pnpm
+- **Docker & Docker Compose** – for local infrastructure (MongoDB, Kafka, Redis, etc.)
+
+Install `pnpm` globally if needed:
+
+```bash
+npm install -g pnpm
 ```
 
-To create a production bundle:
+---
 
-```sh
-npx nx build bff
+## Getting Started (Local Development)
+
+### 1. Install dependencies
+
+```bash
+pnpm install
 ```
 
-To see all available targets to run for a project, run:
+### 2. Start infrastructure providers (MongoDB, Kafka, Redis, Postgres, …)
 
-```sh
-npx nx show project bff
+```bash
+pnpm docker:start:provider
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+This uses `docker-compose.provider.yaml` to bring up the shared infrastructure required by all services.
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### 3. Run all services in development mode
 
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/nest:app demo
+```bash
+pnpm dev
 ```
 
-To generate a new library, use:
+This script will:
 
-```sh
-npx nx g @nx/node:lib mylib
+- Run `nx reset` to clear Nx cache
+- Run `nx run-many -t serve` for all configured apps
+
+### 4. Run a "light" dev environment (subset of core services)
+
+```bash
+pnpm dev-lite
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+By default, this starts: `bff`, `iam-service`, `authorizer-service`, `invoice-service`, `pdf-generator`, `media-service`, `mail-service`.
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+---
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Running Individual Services
 
-## Install Nx Console
+Use Nx directly when you want to focus on a single service:
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+- **BFF**
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```bash
+pnpm nx serve bff
+```
 
-## Useful links
+- **Invoice Service**
 
-Learn more:
+```bash
+pnpm nx serve invoice-service
+```
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/nest?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- **IAM Service** (example)
 
-And join the Nx community:
+```bash
+pnpm nx serve iam-service
+```
 
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- **Inspect available targets for a project**
+
+```bash
+pnpm nx show project invoice-service
+```
+
+---
+
+## Linting, Testing and Building
+
+### Lint
+
+Run lint across the workspace (via ESLint and Nx):
+
+```bash
+pnpm lint
+```
+
+Auto-fix lint issues where possible:
+
+```bash
+pnpm fix
+```
+
+### Build
+
+Build a specific service:
+
+```bash
+pnpm nx build invoice-service
+```
+
+### Affected (CI-friendly)
+
+Use Nx affected to only run tasks on projects impacted by the current changes:
+
+```bash
+pnpm nx:affected
+# or directly
+nx affected -t lint,test,build
+```
+
+This is especially useful in CI to keep pipelines fast in a large monorepo.
+
+---
+
+## CI/CD Overview
+
+The repository is structured to integrate cleanly with modern CI/CD platforms (GitHub Actions, GitLab CI, Jenkins, etc.). A typical pipeline can include:
+
+**CI stages**
+
+- `nx affected -t lint,test,build` for pull requests
+- Build Docker images **only** for affected services
+- Push images to a container registry (tagged with `git-sha`, `branch-latest`, etc.)
+
+**CD stages**
+
+- **Development / Staging**: automatic deployment from a branch like `develop`
+- **Production**: deployment from tags or `main`, optionally gated by manual approval
+
+Leveraging **Nx Cloud** or a compatible remote cache is highly recommended to significantly reduce build and test times in CI.
+
+---
+
+## Useful Nx Commands
+
+- **View the project dependency graph**
+
+```bash
+pnpm nx graph
+```
+
+- **List installed plugins and generators**
+
+```bash
+pnpm nx list
+pnpm nx list @nx/nest
+```
+
+- **Run an arbitrary target**
+
+```bash
+pnpm nx run <project>:<target>
+# examples
+pnpm nx run invoice-service:lint
+pnpm nx run invoice-service:test
+```
+
+---
+
+## Contribution Guidelines
+
+To keep the codebase consistent and maintainable:
+
+- Follow **Clean Architecture / Ports & Adapters** per module/service:
+
+  - `application/` – use cases, services, ports (interfaces)
+  - `infrastructure/` – repositories, adapters (Mongo, Postgre, Kafka, TCP, Stripe, Media, etc.)
+  - `presentation/` – controllers, TCP/Kafka consumers
+
+- Use **DI tokens** (e.g. `*.di-tokens.ts`) instead of direct class references across layers to minimize coupling.
+
+- When adding a new service:
+
+  - Generate a Nest app using Nx generators
+  - Apply the same folder structure (application/infrastructure/presentation)
+  - Add necessary configuration into shared libs (`configuration`, `constants`, `interfaces`, etc.)
+
+- Prefer `nx affected` in your local workflow when working on larger changes, to mimic CI behavior and save time.
+
+---
