@@ -40,4 +40,9 @@ export class StripeClient {
       sessionId: session.id,
     };
   }
+
+  async cancelCheckoutSession(sessionId: string) {
+    const canceledSession = await this.stripe.checkout.sessions.expire(sessionId);
+    return canceledSession;
+  }
 }

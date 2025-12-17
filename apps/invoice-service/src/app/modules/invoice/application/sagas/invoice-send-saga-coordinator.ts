@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { IInvoiceRepository, IInvoiceEventPublisher, ISagaCoordinator } from '../ports/invoice.port';
 import { INVOICE_EVENT_PUBLISHER, INVOICE_REPOSITORY } from '../../invoice.di-tokens';
 import { PAYMENT_SERVICE } from '../../../payment/payment.di-tokens';
@@ -34,7 +34,7 @@ export class SendInvoiceSagaCoordinator implements ISagaCoordinator {
     const fileUrl = await this.uploadFile(
       {
         fileBase64: pdfBase64,
-        fileName: `invoice-${invoice._id}.pdf`,
+        fileName: `invoice-${invoice._id}`,
       },
       processId,
     );
@@ -43,40 +43,80 @@ export class SendInvoiceSagaCoordinator implements ISagaCoordinator {
   //Step3: create payment link
   private async executeCreatePaymentLinkStep(invoice: Invoice) {
     const checkoutSession = await this.paymentService.createCheckoutSession(createSessionMapping(invoice));
-    return checkoutSession.url;
+    return checkoutSession;
   }
 
   //complete saga
   private async completeSaga(invoiceId: string, fileUrl: string, checkoutSession: { url: string }) {
-    //publish invoice sent event to send mail
-    this.invoiceEventPublisher.publishInvoiceSentEvent({
-      id: invoiceId,
-      paymentLink: checkoutSession.url,
-    });
+    try {
+      Logger.log('Payment Link:', checkoutSession.url);
+      await this.invoiceEventPublisher.publishInvoiceSentEvent({
+        id: invoiceId,
+        paymentLink: checkoutSession.url,
+      });
 
-    await this.invoiceRepository.updateById(invoiceId, {
-      status: INVOICE_STATUS.SENT,
-      fileUrl,
-    });
+      await this.invoiceRepository.updateById(invoiceId, {
+        status: INVOICE_STATUS.SENT,
+        fileUrl,
+      });
+    } catch (error) {
+      Logger.error('Failed to complete saga', error);
+      throw error;
+    }
   }
 
   // Main execution method
   async execute(invoiceId: string, processId: string) {
-    try {
-      const invoice = await this.invoiceRepository.getById(invoiceId);
+    const invoice = await this.invoiceRepository.getById(invoiceId);
+    const compensationStack: Array<{ name: string; rollback: () => Promise<void> }> = [];
 
+    try {
       const pdfBase64 = await this.executePdfGenerationStep(invoice, processId);
+      compensationStack.push({
+        name: 'GENERATE_PDF',
+        rollback: async () => {
+          // logic to delete the generated PDF if stored temporarily
+        },
+      });
+
       const fileUrl = await this.executeFileUploadStep(pdfBase64, invoice, processId);
+      compensationStack.push({
+        name: 'UPLOAD_FILE',
+        rollback: async () => {
+          await this.deleteFile(fileUrl, processId);
+        },
+      });
+
       const checkoutSession = await this.executeCreatePaymentLinkStep(invoice);
+
+      compensationStack.push({
+        name: 'CREATE_PAYMENT_LINK',
+        rollback: async () => {
+          await this.paymentService.cancelCheckoutSession(checkoutSession.id);
+        },
+      });
 
       await this.completeSaga(invoiceId, fileUrl, checkoutSession);
     } catch (error) {
-      // Rollback/Compensation logic
-      await this.invoiceRepository.updateById(invoiceId, {
-        status: INVOICE_STATUS.FAILED,
-      });
-      // Additional compensation step
+      // rollback compensation step
+      await this.handleRollback(invoiceId, compensationStack);
       throw error;
+    }
+  }
+
+  private async handleRollback(invoiceId: string, stack: Array<{ name: string; rollback: () => Promise<void> }>) {
+    await this.invoiceRepository.updateById(invoiceId, {
+      status: INVOICE_STATUS.FAILED,
+    });
+
+    while (stack.length > 0) {
+      const step = stack.pop();
+      try {
+        await step.rollback();
+        console.log(`Compensating step: ${step.name}`);
+      } catch (error) {
+        Logger.error(`Rollback failed for step: ${step.name}`, error);
+      }
     }
   }
 
@@ -96,6 +136,17 @@ export class SendInvoiceSagaCoordinator implements ISagaCoordinator {
       this.mediaClient
         .send<string, UploadFileTcpReq>(TCP_REQUEST_MESSAGE.MEDIA.UPLOAD_FILE, {
           data,
+          processId,
+        })
+        .pipe(map((data) => data.data)),
+    );
+  }
+
+  deleteFile(fileUrl: string, processId: string) {
+    return firstValueFrom(
+      this.mediaClient
+        .send<boolean, string>(TCP_REQUEST_MESSAGE.MEDIA.DELETE_FILE, {
+          data: fileUrl,
           processId,
         })
         .pipe(map((data) => data.data)),

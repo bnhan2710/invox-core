@@ -11,7 +11,6 @@ export class StripeAdapter implements IPaymentService {
   }
 
   async cancelCheckoutSession(sessionId: string) {
-    // return this.stripeService.cancelCheckoutSession(sessionId);
-    throw new Error('Method not implemented.');
+    return this.stripeService.cancelCheckoutSession(sessionId);
   }
 }

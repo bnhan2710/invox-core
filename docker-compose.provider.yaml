@@ -111,6 +111,21 @@ services:
       - kafka_data:/bitnami/kafka
     restart: unless-stopped
 
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka_ui
+    ports:
+      - '8090:8080'
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka_server:9092
+    depends_on:
+      - kafka
+    networks:
+      - einvoice-nw
+    restart: unless-stopped
+
 volumes:
   mongodb_data:
     driver: local

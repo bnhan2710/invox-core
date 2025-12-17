@@ -1,4 +1,4 @@
-import { Controller, Inject, Logger, UseGuards } from '@nestjs/common';
+import { Controller, Inject, UseGuards } from '@nestjs/common';
 import { TcpLoggingInterceptor } from '@common/interceptors/tcpLogging.interceptor';
 import { IInvoicePdfService } from '../application/ports/invoice-pdf.port';
 import { MessagePattern } from '@nestjs/microservices';
