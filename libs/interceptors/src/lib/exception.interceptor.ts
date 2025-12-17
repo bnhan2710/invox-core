@@ -42,13 +42,21 @@ export class ExceptionInterceptor implements NestInterceptor {
         this.logger.debug({ error });
         const duration = Date.now() - startTime;
 
+        const message = error?.response?.message || error?.message || error || HTTP_MESSAGE.INTERNAL_SERVER_ERROR;
         const code =
           error?.code || error?.statusCode || error?.response?.statusCode || HttpStatus.INTERNAL_SERVER_ERROR;
-        const message = error?.response?.message || error?.message || error || HTTP_MESSAGE.INTERNAL_SERVER_ERROR;
+
+        const response = error?.getResponse ? error.getResponse() : error.response;
+        const data = response ? { ...response } : null;
+
+        if (data && typeof data === 'object') {
+          delete data.message;
+          delete data.statusCode;
+        }
 
         throw new HttpException(
           new ResponseDto({
-            data: null,
+            data,
             message,
             processID: processUuid,
             statusCode: code,
