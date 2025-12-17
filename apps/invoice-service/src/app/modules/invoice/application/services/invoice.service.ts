@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IInvoiceRepository, IInvoiceService } from '../ports/invoice.port';
-import { INVOICE_EVENT_PUBLISHER, INVOICE_REPOSITORY, SEND_INVOICE_SAGA_COORDINATOR } from '../../invoice.di-tokens';
+import { INVOICE_EVENT_PUBLISHER, INVOICE_REPOSITORY } from '../../invoice.di-tokens';
 import { CreateInvoiceTcpRequest, SendInvoiceTcpReq } from '@common/interfaces/tcp/invoice';
 import { invoiceRequestMapping } from '../mappers';
 import { INVOICE_STATUS } from '@common/constants/enum/invoice.enum';
@@ -24,6 +24,11 @@ export class InvoiceService implements IInvoiceService {
     const { invoiceId, userId } = params;
 
     const invoice = await this.invoiceRepository.getById(invoiceId);
+
+    if (!invoice) {
+      throw new NotFoundException(ERROR_CODE.INVOICE_NOT_FOUND);
+    }
+
     if (invoice.status !== INVOICE_STATUS.CREATED) {
       throw new BadRequestException(ERROR_CODE.INVOICE_CAN_NOT_BE_SENT);
     }

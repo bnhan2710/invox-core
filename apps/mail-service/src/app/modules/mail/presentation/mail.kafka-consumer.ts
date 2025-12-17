@@ -1,4 +1,4 @@
-import { Controller, Inject, Logger } from '@nestjs/common';
+import { Controller, Inject } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { MAIL_INVOICE_SERVICE } from '../mail.di-tokens';
 import { IMailInvoiceService } from '../application/ports/mail.port';
