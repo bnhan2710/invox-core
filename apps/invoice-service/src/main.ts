@@ -8,10 +8,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { QUEUE_GROUPS } from '@common/constants/enum/queue/queue.enum';
+import { Logger as PinoLogger } from '@common/observability/logger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+  app.useLogger(app.get(PinoLogger));
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {

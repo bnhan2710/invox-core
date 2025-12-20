@@ -6,6 +6,7 @@ import { TcpConfiguration } from '@common/configuration/tcp.config';
 import { MongoConfiguration } from '@common/configuration/mongo.config';
 import { StripeConfiguration } from '@common/configuration/stripe.config';
 import { KafkaConfiguration } from '@common/configuration/kafka.config';
+import { LokiConfiguration } from '@common/configuration/loki.config';
 
 class Configuration extends BaseConfiguration {
   @ValidateNested()
@@ -27,6 +28,10 @@ class Configuration extends BaseConfiguration {
   @ValidateNested()
   @Type(() => StripeConfiguration)
   STRIPE_CONFIG = new StripeConfiguration();
+
+  @ValidateNested()
+  @Type(() => LokiConfiguration)
+  LOKI_CONFIG = new LokiConfiguration();
 }
 
 export const CONFIGURATION = new Configuration();
