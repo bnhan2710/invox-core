@@ -21,7 +21,7 @@ async function bootstrap() {
 
   const port = process.env.PDF_GENERATOR_PORT || 3405;
 
-  const globalPrefix = 'api';
+  const globalPrefix = AppModule.CONFIGURATION.GLOBAL_PREFIX;
   app.setGlobalPrefix(globalPrefix);
 
   await app.startAllMicroservices();
