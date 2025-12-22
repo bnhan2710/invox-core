@@ -30,7 +30,7 @@ async function bootstrap() {
 
   const port = process.env.IAM_PORT || 3403;
 
-  const globalPrefix = 'api';
+  const globalPrefix = AppModule.CONFIGURATION.GLOBAL_PREFIX;
   app.setGlobalPrefix(globalPrefix);
 
   await app.startAllMicroservices();

@@ -19,8 +19,5 @@ scrape_configs:
         regex: '/(.*)'
         target_label: container
 
-      - source_labels: [__meta_docker_container_id]
-        target_label: container_id
-
       - source_labels: [__meta_docker_container_log_path]
         target_label: __path__

@@ -19,6 +19,7 @@ import { ThrottlerProvider } from '@common/configuration/throttler.config';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { HealthModule } from './modules/health/health.module';
 import { LoggerModule } from '@common/observability/logger/logger.module';
+import { MetricsModule } from '@common/observability/metrics';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [() => CONFIGURATION] }),
@@ -31,6 +32,7 @@ import { LoggerModule } from '@common/observability/logger/logger.module';
     HealthModule,
     WebhookModule,
     LoggerModule.forRoot('bff'),
+    MetricsModule,
     RedisProvider,
     ThrottlerProvider,
   ],
