@@ -175,7 +175,7 @@ services:
     volumes:
       - ./docker/prometheus.yml:/etc/prometheus/prometheus.yaml
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--config.file=/etc/prometheus/prometheus.yaml'
     networks:
       - einvoice-nw
     restart: unless-stopped

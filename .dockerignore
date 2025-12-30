@@ -1,0 +1,89 @@
+# Node modules
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment files
+.env
+.env.local
+.env.*.local
+**/.env*
+!.env.example
+
+# Nx cache
+.nx/
+.cache/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+docker-compose*.yaml
+Dockerfile
+**/docker/
+.dockerignore
+
+# Documentation
+README.md
+*.md
+docs/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.circleci/
+
+# Test files
+**/*.spec.ts
+**/*.spec.js
+**/*.test.ts
+**/*.test.js
+**/test/
+**/__tests__/
+**/__mocks__/
+apps/einvoice-e2e/
+
+# Config files (keep necessary ones)
+.editorconfig
+.prettierrc
+.prettierignore
+.eslintrc*
+.eslintignore
+commitlint.config.js
+jest.config.ts
+jest.preset.js
+
+# Misc
+tmp/
+temp/
+*.tmp
