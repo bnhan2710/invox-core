@@ -33,7 +33,7 @@ services:
     networks:
       - einvoice-nw
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./docker/docker_data/postgres_data:/var/lib/postgresql
 
   pgadmin:
     image: dpage/pgadmin4
@@ -49,7 +49,7 @@ services:
     networks:
       - einvoice-nw
     volumes:
-      - pgadmin_data:/var/lib/pgadmin
+      - postgres_data:/var/lib/postgresql
 
   keycloak:
     image: quay.io/keycloak/keycloak:25.0.0
