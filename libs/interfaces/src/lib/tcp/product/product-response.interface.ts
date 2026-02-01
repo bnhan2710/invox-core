@@ -1,3 +1,11 @@
-import { Product } from '@common/entities/product.entity';
-
-export type ProductTcpResponse = Product;
+export interface ProductTcpResponse {
+  id: string;
+  name: string;
+  sku: string;
+  unit: string;
+  price: number;
+  vatRate: number;
+  description?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}

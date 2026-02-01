@@ -8,7 +8,7 @@ import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.
 import { ProcessId } from '@common/decorators/processId.decorator';
 import { map } from 'rxjs';
 import { CreateProductRequestDto, ProductResponseDto } from '@common/interfaces/gateway/product';
-
+import { mapTcpToHttp } from '../presentation/mappers/tcp-response.mapper';
 @ApiTags('Product')
 @Controller('product')
 export class ProductHttpController {
@@ -23,7 +23,7 @@ export class ProductHttpController {
         data: body,
         processId,
       })
-      .pipe(map((data) => new ResponseDto(data)));
+      .pipe(map((response) => new ResponseDto({ data: mapTcpToHttp(response.data) })));
   }
 
   @Get()
@@ -35,6 +35,6 @@ export class ProductHttpController {
         data: null,
         processId,
       })
-      .pipe(map((data) => new ResponseDto(data)));
+      .pipe(map((response) => new ResponseDto({ data: response.data.map(mapTcpToHttp) })));
   }
 }
