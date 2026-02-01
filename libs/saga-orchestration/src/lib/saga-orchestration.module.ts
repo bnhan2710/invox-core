@@ -1,6 +1,6 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SagaInstanceDestination } from '../../../schemas/src/lib/saga.schema';
+import { SagaInstanceDestination } from '@common/schemas/saga.schema';
 import { SAGA_ORCHESTRATION_REPOSITORY } from './saga.di-tokens';
 import { SagaOrchestrationMongoRepo } from './infrastrucutre/saga-orchestration.mongo-repo';
 import { SagaOrchestrationService } from './application/saga-orchestration.service';
