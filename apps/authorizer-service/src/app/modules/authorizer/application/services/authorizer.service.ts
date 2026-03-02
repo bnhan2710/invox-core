@@ -6,7 +6,7 @@ import { IKeycloakPort } from '../../../keycloak/application/ports/keycloak.port
 import jwt, { Jwt, JwtPayload } from 'jsonwebtoken';
 import JwksRsa, { JwksClient } from 'jwks-rsa';
 import { ConfigService } from '@nestjs/config';
-import { firstValueFrom, map, pipe } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 import { Role } from '@common/schemas/role.schema';
 import { GRPC_SERVICES } from '@common/configuration/grpc.config';
 import { ClientGrpc } from '@nestjs/microservices';
